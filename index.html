@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogo Comercial | Tienda y Servicios en Linea</title>
+    <title>Catalogo Comercial y de Servicios | Plataforma en Linea</title>
     <link rel="stylesheet" href="CSS/styles.css">
 </head>
-<body id="app-raiz">
+
+<body class="modo-claro" id="app-raiz">
 
     <div id="contenedor-toasts" class="contenedor-toasts" aria-live="polite"></div>
 
@@ -16,40 +18,59 @@
                 <span class="marca-sigla" id="marca-sigla">NOVA</span>
                 <div class="marca-textos">
                     <h1 class="marca-titulo" id="marca-titulo">Nova Comercial &amp; Servicios</h1>
-                    <p class="marca-subtitulo" id="marca-subtitulo">Catalogo Oficial de Productos, Insumos y Soluciones Especializadas</p>
+                    <p class="marca-subtitulo" id="marca-subtitulo">Catalogo Oficial de Productos, Insumos y Soluciones
+                        Especializadas</p>
                 </div>
             </div>
 
-            <nav class="navegacion-principal" aria-label="Navegacion Principal">
-                <button type="button" class="btn-menu-vista activo" data-vista="vista-catalogo" data-log="Navegacion: Catalogo Principal">Catalogo</button>
-                <button type="button" class="btn-menu-vista" data-vista="vista-planes" data-log="Navegacion: Paquetes y Planes">Paquetes y Servicios</button>
-                <button type="button" class="btn-menu-vista" data-vista="vista-nosotros" data-log="Navegacion: Informacion de la Empresa">Nosotros</button>
-                <button type="button" class="btn-menu-vista btn-menu-auditoria" data-vista="vista-auditoria" data-log="Navegacion: Panel de Eventos">
-                    Panel de Eventos
-                    <span class="insignia-menu-log" id="contador-eventos-menu">0</span>
+            <div class="acciones-barra-superior">
+                <nav class="navegacion-principal" aria-label="Navegacion Principal">
+                    <button type="button" class="btn-menu-vista activo" data-vista="vista-catalogo"
+                        data-log="Navegacion: Pestana Catalogo">Catalogo</button>
+                    <button type="button" class="btn-menu-vista" data-vista="vista-paquetes"
+                        data-log="Navegacion: Pestana Paquetes">Paquetes</button>
+                    <button type="button" class="btn-menu-vista" data-vista="vista-nosotros"
+                        data-log="Navegacion: Pestana Nosotros">Nosotros</button>
+                    <button type="button" class="btn-menu-vista btn-menu-auditoria" data-vista="vista-auditoria"
+                        data-log="Navegacion: Pestana Panel de Eventos">
+                        Panel de Eventos
+                        <span class="insignia-menu-log" id="contador-eventos-menu">0</span>
+                    </button>
+                </nav>
+
+                <button type="button" id="btn-alternar-tema" class="btn-alternar-tema"
+                    data-log="Interfaz: Alternar Modo Oscuro / Modo Claro">
+                    <span class="indicador-tema-punto"></span>
+                    <span id="texto-boton-tema">Modo Oscuro</span>
                 </button>
-            </nav>
+            </div>
         </div>
     </header>
 
     <section class="hero-comercial">
         <div class="contenedor-ancho hero-contenido">
             <div class="hero-textos">
-                <span class="hero-etiqueta">Atencion Inmediata y Entrega Garantizada</span>
-                <h2 class="hero-titulo">Todo nuestro portafolio de productos y servicios en un solo lugar</h2>
-                <p class="hero-descripcion">Explore nuestras lineas disponibles, filtre por categoria, agregue items a su pedido y confirme su solicitud en linea de forma rapida y segura.</p>
+                <span class="hero-etiqueta">Calidad Garantizada y Atencion Inmediata</span>
+                <h2 class="hero-titulo">Portafolio Integral de Productos, Paquetes y Servicios</h2>
+                <p class="hero-descripcion">Filtre nuestro catalogo en tiempo real, ordene por precio o nombre, gestione
+                    su pedido en el carrito interactivo y confirme su compra en linea.</p>
             </div>
             <div class="hero-indicadores">
                 <div class="indicador-item">
-                    <span class="indicador-etiqueta">Productos Activos</span>
-                    <strong class="indicador-valor" id="indicador-visibles-catalogo">8</strong>
+                    <span class="indicador-etiqueta">Items Visibles</span>
+                    <strong class="indicador-valor"><span id="indicador-visibles-catalogo">8</span> / <span
+                            id="indicador-total-catalogo">8</span></strong>
                 </div>
                 <div class="indicador-item">
-                    <span class="indicador-etiqueta">Items en Pedido</span>
+                    <span class="indicador-etiqueta">Productos en Pedido</span>
+                    <strong class="indicador-valor" id="indicador-productos-carrito">0</strong>
+                </div>
+                <div class="indicador-item">
+                    <span class="indicador-etiqueta">Unidades Acumuladas</span>
                     <strong class="indicador-valor" id="indicador-unidades-carrito">0</strong>
                 </div>
                 <div class="indicador-item">
-                    <span class="indicador-etiqueta">Total Estimado</span>
+                    <span class="indicador-etiqueta">Total Acumulado</span>
                     <strong class="indicador-valor" id="indicador-importe-carrito">Bs. 0.00</strong>
                 </div>
             </div>
@@ -62,56 +83,69 @@
             <section id="vista-catalogo" class="vista-seccion vista-activa">
                 <div class="panel-controles-catalogo">
                     <div class="buscador-bloque">
-                        <label for="buscador-productos" class="etiqueta-campo">Buscar en el catalogo</label>
+                        <label for="buscador-productos" class="etiqueta-campo">Buscador en tiempo real</label>
                         <div class="buscador-input-grupo">
-                            <input type="text" id="buscador-productos" class="control-input" placeholder="Escriba el nombre, codigo o caracteristica del producto..." autocomplete="off">
-                            <button type="button" id="btn-limpiar-busqueda" class="btn-secundario btn-pequeno" data-log="Buscador: Limpiar Texto">Limpiar</button>
+                            <input type="text" id="buscador-productos" class="control-input"
+                                placeholder="Buscar por nombre, codigo o descripcion..." autocomplete="off"
+                                data-log="Buscador: Tecleo en Campo de Busqueda">
+                            <button type="button" id="btn-limpiar-busqueda" class="btn-secundario btn-pequeno"
+                                data-log="Buscador: Limpiar Texto">Limpiar</button>
                         </div>
                     </div>
 
                     <div class="filtros-bloque">
-                        <span class="etiqueta-campo">Categorias disponibles</span>
+                        <span class="etiqueta-campo">Filtrar por categoria</span>
                         <div class="grupo-botones-filtro" id="grupo-filtros-categoria">
-                            <button type="button" class="btn-filtro activo" data-categoria="todos" data-log="Filtro Categoria: Todos">Todos</button>
-                            <button type="button" class="btn-filtro" data-categoria="linea-destacada" data-log="Filtro Categoria: Linea Destacada">Linea Destacada</button>
-                            <button type="button" class="btn-filtro" data-categoria="insumos" data-log="Filtro Categoria: Insumos">Insumos y Accesorios</button>
-                            <button type="button" class="btn-filtro" data-categoria="servicios" data-log="Filtro Categoria: Servicios">Servicios</button>
-                            <button type="button" class="btn-filtro" data-categoria="kits" data-log="Filtro Categoria: Kits">Kits Especiales</button>
+                            <button type="button" class="btn-filtro activo" data-categoria="todos"
+                                data-log="Filtro Categoria: Todos">Todos</button>
+                            <button type="button" class="btn-filtro" data-categoria="destacados"
+                                data-log="Filtro Categoria: Destacados">Destacados</button>
+                            <button type="button" class="btn-filtro" data-categoria="insumos"
+                                data-log="Filtro Categoria: Insumos">Insumos</button>
+                            <button type="button" class="btn-filtro" data-categoria="servicios"
+                                data-log="Filtro Categoria: Servicios">Servicios</button>
+                            <button type="button" class="btn-filtro" data-categoria="kits"
+                                data-log="Filtro Categoria: Kits">Kits</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="barra-estado-catalogo">
-                    <p id="texto-estado-filtro">Mostrando 8 de 8 items disponibles.</p>
+                    <p id="texto-estado-filtro">Mostrando 8 de 8 items disponibles en el catalogo.</p>
                     <div class="orden-bloque">
                         <label for="selector-orden" class="etiqueta-inline">Ordenar por:</label>
-                        <select id="selector-orden" class="control-select control-select-pequeno" data-log="Ordenamiento de Catalogo">
-                            <option value="predeterminado">Destacados</option>
+                        <select id="selector-orden" class="control-select control-select-pequeno"
+                            data-log="Selector de Ordenamiento de Catalogo">
+                            <option value="predeterminado">Relevancia original</option>
                             <option value="precio-asc">Precio: menor a mayor</option>
                             <option value="precio-desc">Precio: mayor a menor</option>
                             <option value="nombre-asc">Nombre: A - Z</option>
+                            <option value="nombre-desc">Nombre: Z - A</option>
                         </select>
                     </div>
                 </div>
 
                 <div id="mensaje-sin-resultados" class="alerta-vacia oculto">
-                    <h3>No encontramos resultados para su busqueda</h3>
-                    <p>Pruebe con otros terminos o restablezca los filtros para ver todo el catalogo.</p>
-                    <button type="button" id="btn-restablecer-filtros" class="btn-primario" data-log="Catalogo: Restablecer Filtros">Ver Todo el Catalogo</button>
+                    <h3>No se encontraron productos coincidentes</h3>
+                    <p>Intente con otro termino de busqueda o restablezca los filtros activos.</p>
+                    <button type="button" id="btn-restablecer-filtros" class="btn-primario"
+                        data-log="Catalogo: Restablecer Filtros">Mostrar Todo el Catalogo</button>
                 </div>
 
                 <div id="contenedor-tarjetas" class="grilla-catalogo">
 
-                    <article class="tarjeta-producto" data-id="ITEM-101" data-nombre="Pack Profesional Linea Principal" data-categoria="linea-destacada" data-precio="480.00" data-stock="15" data-orden="1">
+                    <article class="tarjeta-producto" data-id="ITEM-101" data-nombre="Pack Profesional Linea Principal"
+                        data-categoria="destacados" data-precio="480.00" data-stock="15" data-orden="1">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Linea Destacada</span>
+                            <span class="insignia-categoria">Destacados</span>
                             <span class="codigo-sku">COD: ITEM-101</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Pack Profesional Linea Principal</h3>
-                            <p class="producto-descripcion">Producto estrella de alta rotacion elaborado bajo estandares de calidad certificada para uso continuo.</p>
+                            <p class="producto-descripcion">Producto principal de alta demanda elaborado bajo estandares
+                                certificados para uso continuo y profesional.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>15 disponibles</strong></span>
+                                <span>Disponibles: <strong>15 uds.</strong></span>
                                 <span>Entrega: <strong>Inmediata</strong></span>
                             </div>
                         </div>
@@ -120,21 +154,24 @@
                                 <span class="precio-etiqueta">Precio Unitario</span>
                                 <strong class="precio-valor">Bs. 480.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-101" data-log="Carrito: Agregar ITEM-101">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-101"
+                                data-log="Carrito: Agregar ITEM-101">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-102" data-nombre="Set de Insumos Esenciales" data-categoria="insumos" data-precio="165.50" data-stock="30" data-orden="2">
+                    <article class="tarjeta-producto" data-id="ITEM-102" data-nombre="Set de Insumos Esenciales"
+                        data-categoria="insumos" data-precio="165.50" data-stock="30" data-orden="2">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Insumos y Accesorios</span>
+                            <span class="insignia-categoria">Insumos</span>
                             <span class="codigo-sku">COD: ITEM-102</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Set de Insumos Esenciales</h3>
-                            <p class="producto-descripcion">Surtido completo de complementos e insumos de reposicion con presentacion sellada y garantizada.</p>
+                            <p class="producto-descripcion">Surtido completo de complementos e insumos de reposicion con
+                                presentacion sellada de fabrica.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>30 disponibles</strong></span>
-                                <span>Formato: <strong>Pack Sellado</strong></span>
+                                <span>Disponibles: <strong>30 uds.</strong></span>
+                                <span>Formato: <strong>Caja Sellada</strong></span>
                             </div>
                         </div>
                         <div class="tarjeta-pie">
@@ -142,64 +179,74 @@
                                 <span class="precio-etiqueta">Precio Unitario</span>
                                 <strong class="precio-valor">Bs. 165.50</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-102" data-log="Carrito: Agregar ITEM-102">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-102"
+                                data-log="Carrito: Agregar ITEM-102">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-103" data-nombre="Servicio de Asesoria y Atencion Integral" data-categoria="servicios" data-precio="320.00" data-stock="12" data-orden="3">
+                    <article class="tarjeta-producto" data-id="ITEM-103"
+                        data-nombre="Servicio de Asesoria y Atencion Integral" data-categoria="servicios"
+                        data-precio="320.00" data-stock="12" data-orden="3">
                         <div class="tarjeta-cabecera">
                             <span class="insignia-categoria">Servicios</span>
                             <span class="codigo-sku">COD: ITEM-103</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Servicio de Asesoria y Atencion Integral</h3>
-                            <p class="producto-descripcion">Sesion personalizada a cargo de personal calificado con diagnostico, seguimiento y recomendaciones.</p>
+                            <p class="producto-descripcion">Sesion especializada a cargo de profesionales acreditados
+                                con evaluacion tecnica, diagnostico y seguimiento.</p>
                             <div class="producto-meta">
-                                <span>Cupos: <strong>12 disponibles</strong></span>
-                                <span>Modalidad: <strong>Presencial / Domicilio</strong></span>
+                                <span>Disponibles: <strong>12 cupos</strong></span>
+                                <span>Modalidad: <strong>Presencial</strong></span>
                             </div>
                         </div>
                         <div class="tarjeta-pie">
                             <div class="precio-bloque">
-                                <span class="precio-etiqueta">Tarifa de Servicio</span>
+                                <span class="precio-etiqueta">Tarifa Servicio</span>
                                 <strong class="precio-valor">Bs. 320.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-103" data-log="Carrito: Agregar ITEM-103">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-103"
+                                data-log="Carrito: Agregar ITEM-103">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-104" data-nombre="Kit Especial Edicion Completa" data-categoria="kits" data-precio="690.00" data-stock="10" data-orden="4">
+                    <article class="tarjeta-producto" data-id="ITEM-104" data-nombre="Kit Especial Edicion Completa"
+                        data-categoria="kits" data-precio="690.00" data-stock="10" data-orden="4">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Kits Especiales</span>
+                            <span class="insignia-categoria">Kits</span>
                             <span class="codigo-sku">COD: ITEM-104</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Kit Especial Edicion Completa</h3>
-                            <p class="producto-descripcion">Combinacion integral de productos seleccionados lista para regalo, evento o implementacion directa.</p>
+                            <p class="producto-descripcion">Combinacion integral de articulos seleccionados lista para
+                                eventos, campanas o implementacion inmediata.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>10 disponibles</strong></span>
-                                <span>Incluye: <strong>8 piezas</strong></span>
+                                <span>Disponibles: <strong>10 kits</strong></span>
+                                <span>Contenido: <strong>8 piezas</strong></span>
                             </div>
                         </div>
                         <div class="tarjeta-pie">
                             <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio del Kit</span>
+                                <span class="precio-etiqueta">Precio por Kit</span>
                                 <strong class="precio-valor">Bs. 690.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-104" data-log="Carrito: Agregar ITEM-104">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-104"
+                                data-log="Carrito: Agregar ITEM-104">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-105" data-nombre="Unidad Premium de Alto Desempeno" data-categoria="linea-destacada" data-precio="840.00" data-stock="8" data-orden="5">
+                    <article class="tarjeta-producto" data-id="ITEM-105" data-nombre="Unidad Premium de Alto Desempeno"
+                        data-categoria="destacados" data-precio="840.00" data-stock="8" data-orden="5">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Linea Destacada</span>
+                            <span class="insignia-categoria">Destacados</span>
                             <span class="codigo-sku">COD: ITEM-105</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Unidad Premium de Alto Desempeno</h3>
-                            <p class="producto-descripcion">Version superior con materiales reforzados y maxima durabilidad para clientes exigentes.</p>
+                            <p class="producto-descripcion">Version superior con componentes reforzados, acabado de
+                                primera linea y garantia extendida.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>8 disponibles</strong></span>
+                                <span>Disponibles: <strong>8 uds.</strong></span>
                                 <span>Garantia: <strong>12 meses</strong></span>
                             </div>
                         </div>
@@ -208,42 +255,50 @@
                                 <span class="precio-etiqueta">Precio Unitario</span>
                                 <strong class="precio-valor">Bs. 840.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-105" data-log="Carrito: Agregar ITEM-105">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-105"
+                                data-log="Carrito: Agregar ITEM-105">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-106" data-nombre="Paquete de Recarga y Mantenimiento" data-categoria="insumos" data-precio="110.00" data-stock="45" data-orden="6">
+                    <article class="tarjeta-producto" data-id="ITEM-106"
+                        data-nombre="Paquete de Recarga y Mantenimiento" data-categoria="insumos" data-precio="110.00"
+                        data-stock="45" data-orden="6">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Insumos y Accesorios</span>
+                            <span class="insignia-categoria">Insumos</span>
                             <span class="codigo-sku">COD: ITEM-106</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Paquete de Recarga y Mantenimiento</h3>
-                            <p class="producto-descripcion">Consumibles de uso frecuente optimizados para conservar el rendimiento diario y reducir costos.</p>
+                            <p class="producto-descripcion">Consumibles de uso frecuente optimizados para conservar el
+                                rendimiento diario y reducir costos operativos.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>45 disponibles</strong></span>
+                                <span>Disponibles: <strong>45 packs</strong></span>
                                 <span>Rendimiento: <strong>30 usos</strong></span>
                             </div>
                         </div>
                         <div class="tarjeta-pie">
                             <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio por Paquete</span>
+                                <span class="precio-etiqueta">Precio Pack</span>
                                 <strong class="precio-valor">Bs. 110.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-106" data-log="Carrito: Agregar ITEM-106">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-106"
+                                data-log="Carrito: Agregar ITEM-106">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-107" data-nombre="Programa de Atencion Personalizada" data-categoria="servicios" data-precio="450.00" data-stock="14" data-orden="7">
+                    <article class="tarjeta-producto" data-id="ITEM-107"
+                        data-nombre="Programa de Atencion Personalizada" data-categoria="servicios" data-precio="450.00"
+                        data-stock="14" data-orden="7">
                         <div class="tarjeta-cabecera">
                             <span class="insignia-categoria">Servicios</span>
                             <span class="codigo-sku">COD: ITEM-107</span>
                         </div>
                         <div class="tarjeta-cuerpo">
                             <h3 class="producto-titulo">Programa de Atencion Personalizada</h3>
-                            <p class="producto-descripcion">Cobertura programada con especialistas, control de calidad periodico y soporte prioritario.</p>
+                            <p class="producto-descripcion">Cobertura programada por sesiones con especialistas
+                                asignados, control de avance y soporte prioritario.</p>
                             <div class="producto-meta">
-                                <span>Cupos: <strong>14 disponibles</strong></span>
+                                <span>Disponibles: <strong>14 cupos</strong></span>
                                 <span>Duracion: <strong>4 sesiones</strong></span>
                             </div>
                         </div>
@@ -252,51 +307,59 @@
                                 <span class="precio-etiqueta">Tarifa Programa</span>
                                 <strong class="precio-valor">Bs. 450.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-107" data-log="Carrito: Agregar ITEM-107">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-107"
+                                data-log="Carrito: Agregar ITEM-107">Agregar</button>
                         </div>
                     </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-108" data-nombre="Combo Familiar / Corporativo Multiuso" data-categoria="kits" data-precio="530.00" data-stock="20" data-orden="8">
+                    <article class="tarjeta-producto" data-id="ITEM-108"
+                        data-nombre="Combo Corporativo y Familiar Multiuso" data-categoria="kits" data-precio="530.00"
+                        data-stock="20" data-orden="8">
                         <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Kits Especiales</span>
+                            <span class="insignia-categoria">Kits</span>
                             <span class="codigo-sku">COD: ITEM-108</span>
                         </div>
                         <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Combo Familiar / Corporativo Multiuso</h3>
-                            <p class="producto-descripcion">Seleccion equilibrada con descuento incluido pensada para cubrir necesidades grupales o eventos.</p>
+                            <h3 class="producto-titulo">Combo Corporativo y Familiar Multiuso</h3>
+                            <p class="producto-descripcion">Seleccion equilibrada con bonificacion especial disenada
+                                para cubrir requerimientos grupales o institucionales.</p>
                             <div class="producto-meta">
-                                <span>Stock: <strong>20 disponibles</strong></span>
+                                <span>Disponibles: <strong>20 combos</strong></span>
                                 <span>Ahorro: <strong>15% incluido</strong></span>
                             </div>
                         </div>
                         <div class="tarjeta-pie">
                             <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio del Combo</span>
+                                <span class="precio-etiqueta">Precio Combo</span>
                                 <strong class="precio-valor">Bs. 530.00</strong>
                             </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-108" data-log="Carrito: Agregar ITEM-108">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-108"
+                                data-log="Carrito: Agregar ITEM-108">Agregar</button>
                         </div>
                     </article>
 
                 </div>
             </section>
 
-            <section id="vista-planes" class="vista-seccion oculto">
+            <section id="vista-paquetes" class="vista-seccion oculto">
                 <div class="panel-bloque">
-                    <h2 class="titulo-seccion">Paquetes y Planes Especiales</h2>
-                    <p class="descripcion-seccion">Soluciones integrales listas para contratar con beneficios preferenciales. Al elegir un paquete se incorpora directamente a su carrito de compras.</p>
+                    <h2 class="titulo-seccion">Paquetes Especiales y Planes Comerciales</h2>
+                    <p class="descripcion-seccion">Opciones preconfiguradas con tarifas preferenciales. Al seleccionar
+                        cualquier paquete se incorpora inmediatamente a su pedido actual.</p>
 
                     <div class="grilla-planes">
                         <div class="tarjeta-plan">
-                            <span class="plan-etiqueta">Plan Basico</span>
-                            <h3 class="plan-nombre">Paquete Esencial</h3>
+                            <span class="plan-etiqueta">Nivel Inicial</span>
+                            <h3 class="plan-nombre">Paquete Basico</h3>
                             <p class="plan-precio">Bs. 290.00</p>
                             <ul class="plan-lista">
-                                <li>Seleccion basica de productos de linea</li>
-                                <li>Atencion prioritaria en sucursal</li>
-                                <li>Entrega programada sin recargo</li>
+                                <li>Seleccion esencial de productos de linea</li>
+                                <li>Atencion preferencial en sucursal</li>
+                                <li>Entrega coordinada sin costo adicional</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PLAN-201" data-nombre="Paquete Esencial" data-categoria="servicios" data-precio="290.00" data-log="Planes: Incorporar PLAN-201">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-201"
+                                data-nombre="Paquete Basico" data-categoria="servicios" data-precio="290.00"
+                                data-log="Paquetes: Incorporar PACK-201">Incorporar al Pedido</button>
                         </div>
 
                         <div class="tarjeta-plan plan-destacado">
@@ -304,23 +367,27 @@
                             <h3 class="plan-nombre">Paquete Integral Plus</h3>
                             <p class="plan-precio">Bs. 580.00</p>
                             <ul class="plan-lista">
-                                <li>Cobertura completa de productos e insumos</li>
-                                <li>Seguimiento personalizado por especialista</li>
-                                <li>Beneficios exclusivos y reposicion rapida</li>
+                                <li>Dotacion completa de productos e insumos</li>
+                                <li>Asesoria tecnica y seguimiento dedicado</li>
+                                <li>Reposicion prioritaria garantizada</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PLAN-202" data-nombre="Paquete Integral Plus" data-categoria="servicios" data-precio="580.00" data-log="Planes: Incorporar PLAN-202">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-202"
+                                data-nombre="Paquete Integral Plus" data-categoria="servicios" data-precio="580.00"
+                                data-log="Paquetes: Incorporar PACK-202">Incorporar al Pedido</button>
                         </div>
 
                         <div class="tarjeta-plan">
-                            <span class="plan-etiqueta">Nivel Superior</span>
-                            <h3 class="plan-nombre">Paquete Corporativo VIP</h3>
+                            <span class="plan-etiqueta">Nivel Avanzado</span>
+                            <h3 class="plan-nombre">Paquete Empresarial VIP</h3>
                             <p class="plan-precio">Bs. 950.00</p>
                             <ul class="plan-lista">
-                                <li>Dotacion completa de catalogo y kits</li>
-                                <li>Asistencia permanente y garantia extendida</li>
-                                <li>Despacho directo a domicilio o sucursal</li>
+                                <li>Cobertura integral de catalogo y servicios</li>
+                                <li>Soporte continuo y garantia extendida</li>
+                                <li>Despacho directo a domicilio u oficina</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PLAN-203" data-nombre="Paquete Corporativo VIP" data-categoria="servicios" data-precio="950.00" data-log="Planes: Incorporar PLAN-203">Agregar al Pedido</button>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-203"
+                                data-nombre="Paquete Empresarial VIP" data-categoria="servicios" data-precio="950.00"
+                                data-log="Paquetes: Incorporar PACK-203">Incorporar al Pedido</button>
                         </div>
                     </div>
                 </div>
@@ -328,25 +395,30 @@
 
             <section id="vista-nosotros" class="vista-seccion oculto">
                 <div class="panel-bloque">
-                    <h2 class="titulo-seccion">Sobre Nuestra Empresa y Compromiso de Calidad</h2>
-                    <p class="descripcion-seccion">Contamos con amplia trayectoria ofreciendo productos seleccionados, insumos certificados y servicios especializados con atencion personalizada.</p>
+                    <h2 class="titulo-seccion">Perfil Institucional y Garantias de Servicio</h2>
+                    <p class="descripcion-seccion">Trabajamos con estandares de excelencia para brindar productos
+                        confiables, insumos certificados y servicios profesionales adaptados a cada cliente.</p>
 
                     <div class="grilla-ficha">
                         <div class="ficha-item">
-                            <h3>Calidad Certificada</h3>
-                            <p>Cada item de nuestro catalogo atraviesa rigurosos controles de seleccion para asegurar la plena satisfaccion de nuestros clientes.</p>
+                            <h3>1. Calidad Certificada</h3>
+                            <p>Todos nuestros articulos e insumos superan controles de verificacion previos a su
+                                despacho para garantizar resultados optimos.</p>
                         </div>
                         <div class="ficha-item">
-                            <h3>Entregas Puntuales</h3>
-                            <p>Coordinamos envios rapidos y seguros en toda la ciudad y provincias, cuidando el embalaje y conservacion de cada pedido.</p>
+                            <h3>2. Logistica y Puntualidad</h3>
+                            <p>Gestionamos entregas programadas y despachos directos manteniendo la trazabilidad e
+                                integridad de cada orden.</p>
                         </div>
                         <div class="ficha-item">
-                            <h3>Atencion Especializada</h3>
-                            <p>Nuestro equipo brinda asesoramiento antes, durante y despues de su compra para que elija exactamente lo que necesita.</p>
+                            <h3>3. Asesoria Personalizada</h3>
+                            <p>Contamos con personal capacitado para orientar su eleccion segun los requerimientos
+                                especificos de su hogar o empresa.</p>
                         </div>
                         <div class="ficha-item">
-                            <h3>Compra 100% Segura</h3>
-                            <p>Proceso transparente con calculo detallado de subtotales, impuestos de ley y confirmacion inmediata de su orden.</p>
+                            <h3>4. Transparencia Comercial</h3>
+                            <p>Liquidacion clara con desglose de subtotales, impuestos de ley (13%) y emision inmediata
+                                de confirmacion de pedido.</p>
                         </div>
                     </div>
                 </div>
@@ -356,16 +428,34 @@
                 <div class="panel-bloque">
                     <div class="cabecera-bitacora-vista">
                         <div>
-                            <span class="insignia-categoria">Modulo Tecnico de Evaluacion</span>
-                            <h2 class="titulo-seccion">Bitacora Global de Eventos en Tiempo Real</h2>
-                            <p class="descripcion-seccion">Registro automatico de interacciones mediante delegacion de eventos (DOM Event Bubbling) e insercion cronologica inversa con .prepend().</p>
+                            <span class="insignia-categoria">Auditoria DOM en Tiempo Real</span>
+                            <h2 class="titulo-seccion">Bitacora Global de Eventos del Sistema</h2>
+                            <p class="descripcion-seccion">Captura automatica mediante delegacion de eventos (DOM Event
+                                Bubbling) para clics, cambios en selectores y tecleos en buscador, insertados con
+                                .prepend().</p>
                         </div>
                         <div class="acciones-bitacora-barra">
-                            <div class="estadistica-bitacora-inline">
-                                <span>Total eventos:</span>
-                                <strong id="contador-eventos-log">0</strong>
-                            </div>
-                            <button type="button" id="btn-limpiar-bitacora" class="btn-secundario btn-pequeno" data-log="Bitacora: Depurar Historial">Limpiar Bitacora</button>
+                            <button type="button" id="btn-limpiar-bitacora" class="btn-secundario btn-pequeno"
+                                data-log="Auditoria: Limpiar Historial de Bitacora">Vaciar Bitacora</button>
+                        </div>
+                    </div>
+
+                    <div class="grilla-estadisticas-bitacora">
+                        <div class="tarjeta-estadistica-log">
+                            <span class="etiqueta-estadistica-log">Total Eventos Registrados</span>
+                            <strong class="valor-estadistica-log" id="contador-eventos-log">0</strong>
+                        </div>
+                        <div class="tarjeta-estadistica-log">
+                            <span class="etiqueta-estadistica-log">Interacciones de Clic / UI</span>
+                            <strong class="valor-estadistica-log" id="contador-eventos-clicks">0</strong>
+                        </div>
+                        <div class="tarjeta-estadistica-log">
+                            <span class="etiqueta-estadistica-log">Consultas / Filtros</span>
+                            <strong class="valor-estadistica-log" id="contador-eventos-busquedas">0</strong>
+                        </div>
+                        <div class="tarjeta-estadistica-log">
+                            <span class="etiqueta-estadistica-log">Operaciones de Carrito / Orden</span>
+                            <strong class="valor-estadistica-log" id="contador-eventos-transacciones">0</strong>
                         </div>
                     </div>
 
@@ -380,19 +470,27 @@
             <section class="panel-lateral-card panel-carrito-sticky" aria-labelledby="titulo-carrito">
                 <div class="panel-lateral-cabecera">
                     <div>
-                        <h2 id="titulo-carrito" class="panel-lateral-titulo">Mi Pedido Actual</h2>
-                        <span class="subtitulo-carrito">Resumen de compra en linea</span>
+                        <h2 id="titulo-carrito" class="panel-lateral-titulo">Resumen de Pedido</h2>
+                        <span class="subtitulo-carrito">Carrito de compras interactivo</span>
                     </div>
-                    <span class="insignia-contador" id="badge-cantidad-carrito">0 items</span>
+                    <span class="insignia-contador" id="badge-cantidad-carrito">0 uds.</span>
                 </div>
 
                 <div id="carrito-vacio-mensaje" class="carrito-vacio">
-                    <p>Su carrito de compras esta vacio. Agregue productos o paquetes desde el catalogo.</p>
+                    <p>Su carrito esta vacio. Seleccione productos o paquetes del catalogo para iniciar su pedido.</p>
                 </div>
 
                 <ul id="lista-items-carrito" class="lista-carrito"></ul>
 
                 <div class="resumen-carrito">
+                    <div class="fila-resumen">
+                        <span>Productos distintos:</span>
+                        <strong id="resumen-cantidad-lineas">0</strong>
+                    </div>
+                    <div class="fila-resumen">
+                        <span>Unidades totales:</span>
+                        <strong id="resumen-cantidad-unidades">0</strong>
+                    </div>
                     <div class="fila-resumen">
                         <span>Subtotal Neto:</span>
                         <strong id="carrito-subtotal">Bs. 0.00</strong>
@@ -408,28 +506,33 @@
                 </div>
 
                 <div class="acciones-carrito">
-                    <button type="button" id="btn-abrir-modal-checkout" class="btn-primario btn-bloque" data-log="Checkout: Abrir Ventana Modal">Finalizar Compra (Checkout)</button>
-                    <button type="button" id="btn-limpiar-carrito" class="btn-peligro btn-bloque" data-log="Carrito: Vaciar Inventario">Vaciar Carrito</button>
+                    <button type="button" id="btn-abrir-modal-checkout" class="btn-primario btn-bloque"
+                        data-log="Checkout: Abrir Modal de Confirmacion">Confirmar Pedido (Checkout)</button>
+                    <button type="button" id="btn-limpiar-carrito" class="btn-peligro btn-bloque"
+                        data-log="Carrito: Vaciar Inventario Completo">Vaciar Carrito</button>
                 </div>
             </section>
 
         </aside>
     </main>
 
-    <div id="modal-checkout-overlay" class="modal-overlay oculto" role="dialog" aria-modal="true" aria-labelledby="modal-checkout-titulo">
+    <div id="modal-checkout-overlay" class="modal-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="modal-checkout-titulo">
         <div class="modal-contenedor">
             <div class="modal-cabecera">
                 <div>
-                    <h2 id="modal-checkout-titulo" class="modal-titulo">Confirmacion de Pedido y Datos de Facturacion</h2>
-                    <p class="modal-subtitulo">Complete los campos obligatorios antes de que concluya el tiempo de reserva de inventario.</p>
+                    <h2 id="modal-checkout-titulo" class="modal-titulo">Confirmacion de Orden y Checkout</h2>
+                    <p class="modal-subtitulo">Complete los datos obligatorios antes de que concluya el tiempo de
+                        reserva.</p>
                 </div>
-                <button type="button" id="btn-cerrar-modal" class="btn-cerrar-modal" data-log="Checkout: Cerrar Modal">X</button>
+                <button type="button" id="btn-cerrar-modal" class="btn-cerrar-modal"
+                    data-log="Checkout: Cerrar Ventana Modal">X</button>
             </div>
 
             <div class="temporizador-bloque">
                 <div class="temporizador-info">
-                    <span>Tiempo restante para confirmar su reserva:</span>
-                    <strong id="temporizador-texto" class="temporizador-contador">30s</strong>
+                    <span>Tiempo restante de tarifa y reserva:</span>
+                    <strong id="temporizador-texto" class="temporizador-contador">00:30</strong>
                 </div>
                 <div class="barra-progreso-fondo">
                     <div id="barra-progreso-tiempo" class="barra-progreso-relleno"></div>
@@ -439,55 +542,70 @@
             <form id="formulario-checkout" class="formulario-checkout" novalidate>
                 <div class="grilla-formulario">
                     <div class="campo-grupo">
-                        <label for="input-cliente-nombre" class="etiqueta-campo">Nombre Completo o Razon Social *</label>
-                        <input type="text" id="input-cliente-nombre" class="control-input campo-validable" placeholder="Ej. Mariana Suarez / Empresa S.R.L.">
-                        <span class="mensaje-error-campo">Ingrese su nombre completo o razon social.</span>
+                        <label for="input-cliente-nombre" class="etiqueta-campo">Nombre Completo o Razon Social
+                            *</label>
+                        <input type="text" id="input-cliente-nombre" class="control-input campo-validable"
+                            placeholder="Ej. Carlos Mendoza / Empresa S.R.L.">
+                        <span class="mensaje-error-campo">Ingrese el nombre o razon social.</span>
                     </div>
 
                     <div class="campo-grupo">
                         <label for="input-cliente-documento" class="etiqueta-campo">NIT o Carnet de Identidad *</label>
-                        <input type="text" id="input-cliente-documento" class="control-input campo-validable" placeholder="Ej. 5849201014">
+                        <input type="text" id="input-cliente-documento" class="control-input campo-validable"
+                            placeholder="Ej. 4829104015">
                         <span class="mensaje-error-campo">Ingrese un NIT o documento valido.</span>
                     </div>
 
                     <div class="campo-grupo">
                         <label for="input-cliente-correo" class="etiqueta-campo">Correo Electronico *</label>
-                        <input type="email" id="input-cliente-correo" class="control-input campo-validable" placeholder="cliente@correo.com">
-                        <span class="mensaje-error-campo">Ingrese un correo electronico valido.</span>
+                        <input type="email" id="input-cliente-correo" class="control-input campo-validable"
+                            placeholder="cliente@dominio.com">
+                        <span class="mensaje-error-campo">Ingrese un correo con formato valido.</span>
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-telefono" class="etiqueta-campo">Telefono / WhatsApp *</label>
-                        <input type="tel" id="input-cliente-telefono" class="control-input campo-validable" placeholder="Ej. 70012345">
-                        <span class="mensaje-error-campo">Ingrese un numero de telefono de contacto.</span>
+                        <label for="input-cliente-telefono" class="etiqueta-campo">Telefono de Contacto *</label>
+                        <input type="tel" id="input-cliente-telefono" class="control-input campo-validable"
+                            placeholder="Ej. 70012345">
+                        <span class="mensaje-error-campo">Ingrese un telefono de contacto.</span>
                     </div>
 
                     <div class="campo-grupo">
                         <label for="select-metodo-pago" class="etiqueta-campo">Metodo de Pago *</label>
-                        <select id="select-metodo-pago" class="control-select campo-validable" data-log="Checkout: Seleccion Metodo de Pago">
-                            <option value="">Seleccione un metodo...</option>
+                        <select id="select-metodo-pago" class="control-select campo-validable"
+                            data-log="Checkout: Seleccion de Metodo de Pago">
+                            <option value="">Seleccione una opcion...</option>
                             <option value="Pago QR Simple">Pago QR Simple</option>
                             <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                            <option value="Efectivo contra Entrega">Efectivo contra Entrega</option>
+                            <option value="Efectivo en Entrega">Efectivo en Entrega</option>
                         </select>
                         <span class="mensaje-error-campo">Seleccione un metodo de pago.</span>
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-direccion" class="etiqueta-campo">Direccion de Entrega o Sucursal *</label>
-                        <input type="text" id="input-cliente-direccion" class="control-input campo-validable" placeholder="Av. Principal Nro. 450, Zona Centro">
+                        <label for="input-cliente-direccion" class="etiqueta-campo">Direccion de Entrega o Sucursal
+                            *</label>
+                        <input type="text" id="input-cliente-direccion" class="control-input campo-validable"
+                            placeholder="Av. Principal Nro. 450, Zona Central">
                         <span class="mensaje-error-campo">Ingrese la direccion de entrega.</span>
                     </div>
                 </div>
 
                 <div class="resumen-modal-checkout">
-                    <span>Importe Total a Confirmar:</span>
-                    <strong id="modal-total-confirmar">Bs. 0.00</strong>
+                    <div>
+                        <span>Unidades a confirmar: <strong id="modal-unidades-confirmar">0</strong></span>
+                    </div>
+                    <div>
+                        <span>Total Orden: </span>
+                        <strong id="modal-total-confirmar">Bs. 0.00</strong>
+                    </div>
                 </div>
 
                 <div class="modal-acciones">
-                    <button type="button" id="btn-cancelar-checkout" class="btn-secundario" data-log="Checkout: Cancelar Operacion">Cancelar</button>
-                    <button type="submit" id="btn-confirmar-compra" class="btn-primario" data-log="Checkout: Enviar Confirmacion">Confirmar Pedido</button>
+                    <button type="button" id="btn-cancelar-checkout" class="btn-secundario"
+                        data-log="Checkout: Cancelar Formulario">Cancelar</button>
+                    <button type="submit" id="btn-confirmar-compra" class="btn-primario"
+                        data-log="Checkout: Enviar Confirmacion de Orden">Confirmar y Emitir Orden</button>
                 </div>
             </form>
         </div>
@@ -495,12 +613,12 @@
 
     <footer class="pie-pagina">
         <div class="contenedor-ancho pie-contenido">
-            <p>Nova Comercial &amp; Servicios | Plataforma de Catalogo y Pedidos en Linea</p>
-            <p>Todos los derechos reservados</p>
+            <p>Nova Comercial &amp; Servicios | Sistema de Catalogo y Carrito en Linea</p>
         </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="JS/script.js"></script>
 </body>
+
 </html>
