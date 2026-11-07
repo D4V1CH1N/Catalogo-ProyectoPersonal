@@ -3,6 +3,9 @@ $(document).ready(function () {
     let categoriaActiva = "todos";
     let terminoBusqueda = "";
     let contadorEventos = 0;
+    let contadorClicksUI = 0;
+    let contadorBusquedasFiltros = 0;
+    let contadorTransacciones = 0;
     let intervaloCheckout = null;
     let segundosRestantes = 30;
     const TIEMPO_MAXIMO_CHECKOUT = 30;
@@ -16,12 +19,35 @@ $(document).ready(function () {
         return horas + ":" + minutos + ":" + segundos;
     }
 
+    function formatearCuentaRegresiva(totalSegundos) {
+        const minutos = String(Math.floor(totalSegundos / 60)).padStart(2, "0");
+        const segundos = String(totalSegundos % 60).padStart(2, "0");
+        return minutos + ":" + segundos;
+    }
+
     function formatearMoneda(valor) {
         return "Bs. " + Number(valor).toFixed(2);
     }
 
-    function registrarEventoBitacora(origen, mensaje) {
+    function sincronizarContadoresBitacora() {
+        $("#contador-eventos-log").text(contadorEventos);
+        $("#contador-eventos-menu").text(contadorEventos);
+        $("#contador-eventos-clicks").text(contadorClicksUI);
+        $("#contador-eventos-busquedas").text(contadorBusquedasFiltros);
+        $("#contador-eventos-transacciones").text(contadorTransacciones);
+    }
+
+    function registrarEventoBitacora(origen, mensaje, categoriaMetrica) {
         contadorEventos++;
+
+        if (categoriaMetrica === "busqueda") {
+            contadorBusquedasFiltros++;
+        } else if (categoriaMetrica === "transaccion") {
+            contadorTransacciones++;
+        } else {
+            contadorClicksUI++;
+        }
+
         const horaActual = obtenerHoraExacta();
         const itemHtml =
             '<li class="registro-log">' +
@@ -33,8 +59,7 @@ $(document).ready(function () {
             '</li>';
 
         $("#lista-bitacora-global").prepend(itemHtml);
-        $("#contador-eventos-log").text(contadorEventos);
-        $("#contador-eventos-menu").text(contadorEventos);
+        sincronizarContadoresBitacora();
     }
 
     function mostrarToast(mensaje, tipo) {
@@ -45,7 +70,7 @@ $(document).ready(function () {
 
         $nuevoToast
             .slideDown(260)
-            .delay(2800)
+            .delay(3000)
             .fadeOut(420, function () {
                 $(this).remove();
             });
@@ -77,6 +102,7 @@ $(document).ready(function () {
         });
 
         const totalTarjetas = $("#contenedor-tarjetas .tarjeta-producto").length;
+        $("#indicador-total-catalogo").text(totalTarjetas);
         $("#indicador-visibles-catalogo").text(visibles);
 
         if (visibles === 0) {
@@ -85,12 +111,12 @@ $(document).ready(function () {
             $("#mensaje-sin-resultados").addClass("oculto");
         }
 
-        let resumenFiltro = "Mostrando " + visibles + " de " + totalTarjetas + " items disponibles";
+        let resumenFiltro = "Mostrando " + visibles + " de " + totalTarjetas + " items disponibles en el catalogo";
         if (categoriaActiva !== "todos") {
-            resumenFiltro += " en la categoria seleccionada";
+            resumenFiltro += " | Categoria: " + categoriaActiva.toUpperCase();
         }
         if (texto !== "") {
-            resumenFiltro += ' para "' + terminoBusqueda.trim() + '"';
+            resumenFiltro += ' | Busqueda: "' + terminoBusqueda.trim() + '"';
         }
         $("#texto-estado-filtro").text(resumenFiltro + ".");
     }
@@ -112,6 +138,9 @@ $(document).ready(function () {
             if (criterio === "nombre-asc") {
                 return String($a.attr("data-nombre")).localeCompare(String($b.attr("data-nombre")));
             }
+            if (criterio === "nombre-desc") {
+                return String($b.attr("data-nombre")).localeCompare(String($a.attr("data-nombre")));
+            }
             return parseInt($a.attr("data-orden"), 10) - parseInt($b.attr("data-orden"), 10);
         });
 
@@ -126,8 +155,9 @@ $(document).ready(function () {
 
         let subtotalGeneral = 0;
         let cantidadTotalUnidades = 0;
+        const cantidadLineasProductos = carritoInventario.length;
 
-        if (carritoInventario.length === 0) {
+        if (cantidadLineasProductos === 0) {
             $("#carrito-vacio-mensaje").removeClass("oculto");
         } else {
             $("#carrito-vacio-mensaje").addClass("oculto");
@@ -146,8 +176,8 @@ $(document).ready(function () {
                             '</span>' +
                         '</div>' +
                         '<div class="item-carrito-controles">' +
-                            '<button type="button" class="btn-cantidad-carrito" data-accion="disminuir" data-id="' + item.id + '" data-log="Carrito: Disminuir unidad de ' + item.id + '">-</button>' +
-                            '<button type="button" class="btn-cantidad-carrito" data-accion="incrementar" data-id="' + item.id + '" data-log="Carrito: Incrementar unidad de ' + item.id + '">+</button>' +
+                            '<button type="button" class="btn-cantidad-carrito" data-accion="disminuir" data-id="' + item.id + '" data-log="Carrito: Disminuir cantidad de ' + item.id + '">-</button>' +
+                            '<button type="button" class="btn-cantidad-carrito" data-accion="incrementar" data-id="' + item.id + '" data-log="Carrito: Incrementar cantidad de ' + item.id + '">+</button>' +
                             '<button type="button" class="btn-eliminar-item" data-accion="eliminar" data-id="' + item.id + '" data-log="Carrito: Eliminar item ' + item.id + '">X</button>' +
                         '</div>' +
                     '</li>';
@@ -159,12 +189,17 @@ $(document).ready(function () {
         const montoImpuesto = subtotalGeneral * TASA_IMPUESTO;
         const montoTotal = subtotalGeneral + montoImpuesto;
 
+        $("#resumen-cantidad-lineas").text(cantidadLineasProductos);
+        $("#resumen-cantidad-unidades").text(cantidadTotalUnidades);
         $("#carrito-subtotal").text(formatearMoneda(subtotalGeneral));
         $("#carrito-impuesto").text(formatearMoneda(montoImpuesto));
         $("#carrito-total").text(formatearMoneda(montoTotal));
+
+        $("#modal-unidades-confirmar").text(cantidadTotalUnidades);
         $("#modal-total-confirmar").text(formatearMoneda(montoTotal));
 
-        $("#badge-cantidad-carrito").text(cantidadTotalUnidades + (cantidadTotalUnidades === 1 ? " item" : " items"));
+        $("#badge-cantidad-carrito").text(cantidadTotalUnidades + (cantidadTotalUnidades === 1 ? " ud." : " uds."));
+        $("#indicador-productos-carrito").text(cantidadLineasProductos);
         $("#indicador-unidades-carrito").text(cantidadTotalUnidades);
         $("#indicador-importe-carrito").text(formatearMoneda(montoTotal));
     }
@@ -199,7 +234,7 @@ $(document).ready(function () {
 
     function actualizarVistaTemporizador() {
         const porcentaje = (segundosRestantes / TIEMPO_MAXIMO_CHECKOUT) * 100;
-        $("#temporizador-texto").text(segundosRestantes + "s");
+        $("#temporizador-texto").text(formatearCuentaRegresiva(segundosRestantes));
         $("#barra-progreso-tiempo").css("width", porcentaje + "%");
 
         if (segundosRestantes <= 10) {
@@ -209,6 +244,11 @@ $(document).ready(function () {
             $("#temporizador-texto").removeClass("urgente");
             $("#barra-progreso-tiempo").removeClass("urgente");
         }
+    }
+
+    function cerrarModalCheckout() {
+        detenerTemporizadorCheckout();
+        $("#modal-checkout-overlay").fadeOut(280);
     }
 
     function iniciarTemporizadorCheckout() {
@@ -222,9 +262,13 @@ $(document).ready(function () {
 
             if (segundosRestantes <= 0) {
                 detenerTemporizadorCheckout();
-                cerrarModalCheckout();
-                registrarEventoBitacora("TEMPORIZADOR", "Tiempo de reserva agotado (30s). Cierre automatico de ventana modal.");
-                mostrarToast("Tiempo de reserva agotado (30s). Por favor inicie el checkout nuevamente.", "alerta");
+                $("#modal-checkout-overlay").fadeOut(320);
+                registrarEventoBitacora(
+                    "TEMPORIZADOR ASINCRONO",
+                    "Tarifa y reserva expiradas (00:00). Cierre automatico de modal con .fadeOut().",
+                    "transaccion"
+                );
+                mostrarToast("Tarifa y tiempo de reserva expirados (00:30). Inicie el checkout nuevamente.", "alerta");
             }
         }, 1000);
     }
@@ -236,35 +280,58 @@ $(document).ready(function () {
 
     function abrirModalCheckout() {
         if (carritoInventario.length === 0) {
-            mostrarToast("Agregue al menos un producto o paquete a su pedido antes de continuar.", "alerta");
-            registrarEventoBitacora("VALIDACION CARRITO", "Intento de abrir Checkout con el carrito vacio.");
+            mostrarToast("Agregue al menos un producto o paquete al carrito antes de confirmar.", "alerta");
+            registrarEventoBitacora("VALIDACION CARRITO", "Intento de abrir Checkout con el carrito vacio.", "transaccion");
             return;
         }
 
         limpiarErroresFormulario();
-        $("#modal-checkout-overlay").removeClass("oculto");
+        $("#modal-checkout-overlay").css("display", "flex").hide().fadeIn(240);
         iniciarTemporizadorCheckout();
-        registrarEventoBitacora("MODAL CHECKOUT", "Apertura de formulario de confirmacion con cuenta regresiva de 30s.");
-    }
-
-    function cerrarModalCheckout() {
-        detenerTemporizadorCheckout();
-        $("#modal-checkout-overlay").addClass("oculto");
+        registrarEventoBitacora("MODAL CHECKOUT", "Apertura de modal con cuenta regresiva sincronizada en 00:30.", "transaccion");
     }
 
     $(document).on("click", "[data-log]", function () {
-        const etiquetaLog = $(this).attr("data-log");
+        const etiquetaLog = String($(this).attr("data-log"));
         const tipoElemento = this.tagName.toLowerCase();
-        if (tipoElemento === "select") {
+        if (tipoElemento === "select" || tipoElemento === "input") {
             return;
         }
-        registrarEventoBitacora("EVENT BUBBLING (" + tipoElemento + ")", "Interaccion registrada: " + etiquetaLog);
+
+        let categoriaMetrica = "click";
+        if (etiquetaLog.indexOf("Filtro") !== -1 || etiquetaLog.indexOf("Buscador") !== -1 || etiquetaLog.indexOf("Catalogo") !== -1) {
+            categoriaMetrica = "busqueda";
+        } else if (etiquetaLog.indexOf("Carrito") !== -1 || etiquetaLog.indexOf("Paquetes") !== -1 || etiquetaLog.indexOf("Checkout") !== -1) {
+            categoriaMetrica = "transaccion";
+        }
+
+        registrarEventoBitacora("BUBBLING CLICK (" + tipoElemento + ")", etiquetaLog, categoriaMetrica);
     });
 
     $(document).on("change", "select[data-log]", function () {
-        const etiquetaLog = $(this).attr("data-log");
+        const etiquetaLog = String($(this).attr("data-log"));
         const valorSeleccionado = $(this).find("option:selected").text();
-        registrarEventoBitacora("EVENT BUBBLING (select)", etiquetaLog + " -> " + valorSeleccionado);
+        const categoriaMetrica = etiquetaLog.indexOf("Ordenamiento") !== -1 ? "busqueda" : "transaccion";
+        registrarEventoBitacora("BUBBLING CHANGE (select)", etiquetaLog + " -> " + valorSeleccionado, categoriaMetrica);
+    });
+
+    $(document).on("keyup", "input[data-log]", function () {
+        const etiquetaLog = $(this).attr("data-log");
+        const valorActual = $(this).val().trim();
+        registrarEventoBitacora("BUBBLING KEYUP (input)", etiquetaLog + ' -> "' + (valorActual || "vacio") + '"', "busqueda");
+    });
+
+    $("#btn-alternar-tema").on("click", function () {
+        const $cuerpo = $("#app-raiz");
+        if ($cuerpo.hasClass("modo-claro")) {
+            $cuerpo.removeClass("modo-claro").addClass("modo-oscuro");
+            $("#texto-boton-tema").text("Modo Claro");
+            mostrarToast("Interfaz actualizada a Modo Oscuro.", "info");
+        } else {
+            $cuerpo.removeClass("modo-oscuro").addClass("modo-claro");
+            $("#texto-boton-tema").text("Modo Oscuro");
+            mostrarToast("Interfaz actualizada a Modo Claro.", "info");
+        }
     });
 
     $(".btn-menu-vista").on("click", function () {
@@ -280,14 +347,13 @@ $(document).ready(function () {
     $("#buscador-productos").on("keyup", function () {
         terminoBusqueda = $(this).val();
         aplicarFiltrosCatalogo();
-        registrarEventoBitacora("BUSCADOR KEYUP", 'Filtrado dinamico por texto: "' + (terminoBusqueda || "vacio") + '"');
     });
 
     $("#btn-limpiar-busqueda").on("click", function () {
         $("#buscador-productos").val("");
         terminoBusqueda = "";
         aplicarFiltrosCatalogo();
-        mostrarToast("Busqueda restablecida.", "info");
+        mostrarToast("Campo de busqueda restablecido.", "info");
     });
 
     $("#grupo-filtros-categoria").on("click", ".btn-filtro", function () {
@@ -306,7 +372,7 @@ $(document).ready(function () {
         $("#selector-orden").val("predeterminado");
         ordenarTarjetasCatalogo("predeterminado");
         aplicarFiltrosCatalogo();
-        mostrarToast("Mostrando todos los productos del catalogo.", "info");
+        mostrarToast("Filtros restablecidos. Mostrando todo el catalogo.", "info");
     });
 
     $("#selector-orden").on("change", function () {
@@ -373,8 +439,8 @@ $(document).ready(function () {
 
         carritoInventario = [];
         renderizarCarrito();
-        mostrarToast("Se vacio el inventario del carrito correctamente.", "alerta");
-        registrarEventoBitacora("CARRITO", "Limpieza total de items en el carrito de compras.");
+        mostrarToast("Carrito vaciado correctamente.", "alerta");
+        registrarEventoBitacora("CARRITO", "Limpieza total de inventario en el carrito.", "transaccion");
     });
 
     $("#btn-abrir-modal-checkout").on("click", function () {
@@ -383,13 +449,13 @@ $(document).ready(function () {
 
     $("#btn-cerrar-modal, #btn-cancelar-checkout").on("click", function () {
         cerrarModalCheckout();
-        mostrarToast("Proceso de confirmacion cancelado.", "info");
+        mostrarToast("Operacion de checkout cancelada.", "info");
     });
 
     $("#modal-checkout-overlay").on("click", function (evento) {
         if (evento.target === this) {
             cerrarModalCheckout();
-            registrarEventoBitacora("MODAL CHECKOUT", "Cierre de modal por clic fuera del contenedor.");
+            registrarEventoBitacora("MODAL CHECKOUT", "Cierre de modal por clic en fondo exterior.", "click");
         }
     });
 
@@ -423,16 +489,20 @@ $(document).ready(function () {
         });
 
         if (!formularioValido) {
-            mostrarToast("Complete todos los campos obligatorios correctamente antes de confirmar.", "error");
-            registrarEventoBitacora("VALIDACION CHECKOUT", "Envio bloqueado con e.preventDefault(): campos incompletos o invalidos.");
+            mostrarToast("Complete todos los campos obligatorios y verifique el correo electronico.", "error");
+            registrarEventoBitacora(
+                "VALIDACION CHECKOUT",
+                "Envio bloqueado con e.preventDefault(): campos vacios o formato de correo invalido.",
+                "transaccion"
+            );
             return;
         }
 
         const clienteNombre = $("#input-cliente-nombre").val().trim();
         const metodoPago = $("#select-metodo-pago").val();
         const totalConfirmado = $("#carrito-total").text();
+        const unidadesConfirmadas = $("#indicador-unidades-carrito").text();
 
-        detenerTemporizadorCheckout();
         cerrarModalCheckout();
 
         $("#formulario-checkout")[0].reset();
@@ -441,23 +511,29 @@ $(document).ready(function () {
         carritoInventario = [];
         renderizarCarrito();
 
-        mostrarToast("Pedido confirmado para " + clienteNombre + " por " + totalConfirmado + ".", "exito");
+        mostrarToast(
+            "Orden confirmada con exito para " + clienteNombre + " (" + unidadesConfirmadas + " uds.) por " + totalConfirmado + ".",
+            "exito"
+        );
         registrarEventoBitacora(
-            "COMPRA CONFIRMADA",
-            "Pedido emitido para " + clienteNombre + " (" + metodoPago + ") por " + totalConfirmado + "."
+            "ORDEN CONFIRMADA",
+            "Compra emitida para " + clienteNombre + " | " + unidadesConfirmadas + " uds. | " + metodoPago + " | Total: " + totalConfirmado,
+            "transaccion"
         );
     });
 
     $("#btn-limpiar-bitacora").on("click", function () {
         $("#lista-bitacora-global").empty();
         contadorEventos = 0;
-        $("#contador-eventos-log").text("0");
-        $("#contador-eventos-menu").text("0");
-        registrarEventoBitacora("SISTEMA", "Bitacora de eventos depurada manualmente.");
-        mostrarToast("Bitacora de eventos reiniciada.", "info");
+        contadorClicksUI = 0;
+        contadorBusquedasFiltros = 0;
+        contadorTransacciones = 0;
+        sincronizarContadoresBitacora();
+        registrarEventoBitacora("SISTEMA", "Bitacora de eventos reiniciada manualmente.", "click");
+        mostrarToast("Historial de eventos vaciado.", "info");
     });
 
     aplicarFiltrosCatalogo();
     renderizarCarrito();
-    registrarEventoBitacora("SISTEMA", "Catalogo comercial inicializado y listo para operar.");
+    registrarEventoBitacora("SISTEMA", "Plataforma de Catalogo y Servicios inicializada en Modo Claro.", "click");
 });
