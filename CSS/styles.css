@@ -1211,16 +1211,62 @@ body.modo-oscuro .indicador-tema-punto {
 .pie-pagina {
     background-color: var(--color-secundario);
     color: var(--color-texto-atenuado);
-    padding: 16px 0;
+    padding: 20px 0;
     font-size: 0.82rem;
     margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .pie-contenido {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 14px;
+}
+
+.pie-info p {
+    margin-bottom: 2px;
+}
+
+.pie-redes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pie-redes-titulo {
+    font-size: 0.8rem;
+    color: var(--color-texto-atenuado);
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.enlace-red-social {
+    color: var(--color-texto-claro);
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 6px 12px;
+    border-radius: var(--radio-borde);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: var(--transicion-base);
+    display: inline-flex;
+    align-items: center;
+}
+
+.enlace-red-social:hover {
+    background-color: var(--color-acento);
+    border-color: var(--color-acento);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.enlace-red-social.enlace-whatsapp:hover {
+    background-color: #0d9488;
+    border-color: #0d9488;
 }
 
 @media (max-width: 1100px) {
@@ -1304,5 +1350,11 @@ body.modo-oscuro .indicador-tema-punto {
 
     .grilla-formulario {
         grid-template-columns: 1fr;
+    }
+
+    .pie-contenido {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 }
