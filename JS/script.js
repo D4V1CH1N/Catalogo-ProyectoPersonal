@@ -94,10 +94,10 @@ $(document).ready(function () {
                 descripcionTarjeta.indexOf(texto) !== -1;
 
             if (coincideCategoria && coincideTexto) {
-                $tarjeta.removeClass("oculto");
+                $tarjeta.stop(true, true).fadeIn("fast");
                 visibles++;
             } else {
-                $tarjeta.addClass("oculto");
+                $tarjeta.stop(true, true).fadeOut("fast");
             }
         });
 
@@ -106,9 +106,9 @@ $(document).ready(function () {
         $("#indicador-visibles-catalogo").text(visibles);
 
         if (visibles === 0) {
-            $("#mensaje-sin-resultados").removeClass("oculto");
+            $("#mensaje-sin-resultados").stop(true, true).fadeIn("fast");
         } else {
-            $("#mensaje-sin-resultados").addClass("oculto");
+            $("#mensaje-sin-resultados").stop(true, true).fadeOut("fast");
         }
 
         let resumenFiltro = "Mostrando " + visibles + " de " + totalTarjetas + " items disponibles en el catalogo";
@@ -194,6 +194,7 @@ $(document).ready(function () {
         $("#carrito-subtotal").text(formatearMoneda(subtotalGeneral));
         $("#carrito-impuesto").text(formatearMoneda(montoImpuesto));
         $("#carrito-total").text(formatearMoneda(montoTotal));
+        $("#carrito-total").stop(true, true).animate({ opacity: 0.3 }, 150).animate({ opacity: 1 }, 200);
 
         $("#modal-unidades-confirmar").text(cantidadTotalUnidades);
         $("#modal-total-confirmar").text(formatearMoneda(montoTotal));
@@ -334,6 +335,11 @@ $(document).ready(function () {
         }
     });
 
+    $("#btn-menu").on("click", function () {
+        $(this).toggleClass("activo");
+        $("#menu-movil").slideToggle("fast");
+    });
+
     $(".btn-menu-vista").on("click", function () {
         const vistaDestino = $(this).attr("data-vista");
 
@@ -342,6 +348,18 @@ $(document).ready(function () {
 
         $(".vista-seccion").addClass("oculto").removeClass("vista-activa");
         $("#" + vistaDestino).removeClass("oculto").addClass("vista-activa");
+
+        if ($(window).width() <= 1100) {
+            $("#menu-movil").slideUp("fast");
+            $("#btn-menu").removeClass("activo");
+        }
+    });
+
+    $(window).on("resize", function () {
+        if ($(window).width() > 1100) {
+            $("#menu-movil").removeAttr("style");
+            $("#btn-menu").removeClass("activo");
+        }
     });
 
     $("#buscador-productos").on("keyup", function () {
