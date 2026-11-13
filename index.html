@@ -3,7 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogo Comercial y de Servicios | Plataforma en Linea</title>
+    <meta name="description" content="QUIMFA S.A. Division Farmaceutica y Suministros Medicos. Catalogo oficial de medicamentos certificados, insumos clinicos y kits hospitalarios.">
+    <meta name="theme-color" content="#0f4c81">
+    <title>QUIMFA S.A. | Catalogo Farmaceutico y Suministros Medicos</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function () {});
+            });
+        }
+    </script>
+    <script>
+        (function () {
+            var esDispositivoMovil = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (esDispositivoMovil) {
+                window.location.replace('pwa/index.html');
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="CSS/styles.css">
 </head>
 <body class="modo-claro" id="app-raiz">
@@ -13,28 +31,41 @@
     <header class="encabezado-principal">
         <div class="contenedor-ancho barra-superior">
             <div class="marca-corporativa">
-                <span class="marca-sigla" id="marca-sigla">NOVA</span>
+                <span class="marca-sigla" id="marca-sigla">QF</span>
                 <div class="marca-textos">
-                    <h1 class="marca-titulo" id="marca-titulo">Nova Comercial &amp; Servicios</h1>
-                    <p class="marca-subtitulo" id="marca-subtitulo">Catalogo Oficial de Productos, Insumos y Soluciones Especializadas</p>
+                    <h1 class="marca-titulo" id="marca-titulo">QUIMFA S.A.</h1>
+                    <p class="marca-subtitulo" id="marca-subtitulo">Division Farmaceutica y Suministros Medicos | Medicamentos Certificados, Insumos Clinicos y Kits Hospitalarios</p>
                 </div>
             </div>
 
             <div class="grupo-navegacion-acciones">
                 <nav id="menu-movil" class="navegacion-principal" aria-label="Navegacion Principal">
-                    <button type="button" class="btn-menu-vista activo" data-vista="vista-catalogo" data-log="Navegacion: Pestana Catalogo">Catalogo</button>
+                    <button type="button" class="btn-menu-vista activo" data-vista="vista-catalogo" data-log="Navegacion: Pestana Vademecum">Vademecum</button>
+                    <button type="button" class="btn-menu-vista" data-vista="vista-cotizador" data-log="Navegacion: Pestana Cotizador y Lotes">Cotizador y Lotes</button>
                     <button type="button" class="btn-menu-vista" data-vista="vista-paquetes" data-log="Navegacion: Pestana Paquetes">Paquetes</button>
                     <button type="button" class="btn-menu-vista" data-vista="vista-nosotros" data-log="Navegacion: Pestana Nosotros">Nosotros</button>
-                    <button type="button" class="btn-menu-vista btn-menu-auditoria" data-vista="vista-auditoria" data-log="Navegacion: Pestana Panel de Eventos">
-                        Panel de Eventos
+                    <button type="button" class="btn-menu-vista btn-menu-auditoria" data-vista="vista-auditoria" data-log="Navegacion: Pestana Bitacora">
+                        Bitacora
                         <span class="insignia-menu-log" id="contador-eventos-menu">0</span>
                     </button>
                 </nav>
 
                 <div class="acciones-barra-superior">
+                    <span id="estadoRed" class="indicador-red">En Linea</span>
+
                     <button type="button" id="btn-alternar-tema" class="btn-alternar-tema" data-log="Interfaz: Alternar Modo Oscuro / Modo Claro">
                         <span class="indicador-tema-punto"></span>
                         <span id="texto-boton-tema">Modo Oscuro</span>
+                    </button>
+
+                    <button type="button" id="btn-toggle-carrito" class="btn-toggle-carrito" data-log="Carrito: Alternar Panel de Pedido" aria-expanded="false" aria-controls="panel-carrito-drawer">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span>Pedido</span>
+                        <span class="insignia-contador-header" id="badge-cantidad-carrito">0</span>
                     </button>
 
                     <button type="button" id="btn-menu" class="btn-menu-hamburguesa" data-log="Interfaz: Alternar Menu Hamburguesa" aria-label="Abrir Menu">
@@ -47,71 +78,58 @@
         </div>
     </header>
 
-    <section class="hero-comercial">
-        <div class="contenedor-ancho hero-contenido">
-            <div class="hero-textos">
-                <span class="hero-etiqueta">Calidad Garantizada y Atencion Inmediata</span>
-                <h2 class="hero-titulo">Portafolio Integral de Productos, Paquetes y Servicios</h2>
-                <p class="hero-descripcion">Filtre nuestro catalogo en tiempo real, ordene por precio o nombre, gestione su pedido en el carrito interactivo y confirme su compra en linea.</p>
-            </div>
-            <div class="hero-indicadores">
-                <div class="indicador-item">
-                    <span class="indicador-etiqueta">Items Visibles</span>
-                    <strong class="indicador-valor"><span id="indicador-visibles-catalogo">8</span> / <span id="indicador-total-catalogo">8</span></strong>
-                </div>
-                <div class="indicador-item">
-                    <span class="indicador-etiqueta">Productos en Pedido</span>
-                    <strong class="indicador-valor" id="indicador-productos-carrito">0</strong>
-                </div>
-                <div class="indicador-item">
-                    <span class="indicador-etiqueta">Unidades Acumuladas</span>
-                    <strong class="indicador-valor" id="indicador-unidades-carrito">0</strong>
-                </div>
-                <div class="indicador-item">
-                    <span class="indicador-etiqueta">Total Acumulado</span>
-                    <strong class="indicador-valor" id="indicador-importe-carrito">Bs. 0.00</strong>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <main class="contenedor-ancho layout-principal">
         <div class="columna-contenido">
 
             <section id="vista-catalogo" class="vista-seccion vista-activa">
-                <div class="panel-controles-catalogo">
-                    <div class="buscador-bloque">
-                        <label for="buscador-productos" class="etiqueta-campo">Buscador en tiempo real</label>
-                        <div class="buscador-input-grupo">
-                            <input type="text" id="buscador-productos" class="control-input" placeholder="Buscar por nombre, codigo o descripcion..." autocomplete="off" data-log="Buscador: Tecleo en Campo de Busqueda">
-                            <button type="button" id="btn-limpiar-busqueda" class="btn-secundario btn-pequeno" data-log="Buscador: Limpiar Texto">Limpiar</button>
+                <div id="banner-linea" class="barra-superior-vademecum seccion-destacada matiz-todos">
+                    <div class="fila-controles-compactos">
+                        <div class="buscador-compacto">
+                            <input type="text" id="buscador-productos" class="control-input control-input-compacto" placeholder="Buscar medicamento, principio activo o codigo..." autocomplete="off" aria-label="Buscador en tiempo real" data-log="Buscador: Tecleo en Campo de Busqueda">
+                            <button type="button" id="btn-limpiar-busqueda" class="btn-secundario btn-compacto" data-log="Buscador: Limpiar Texto">Limpiar</button>
                         </div>
-                    </div>
 
-                    <div class="filtros-bloque">
-                        <span class="etiqueta-campo">Filtrar por categoria</span>
                         <div class="grupo-botones-filtro" id="grupo-filtros-categoria">
-                            <button type="button" class="btn-filtro activo" data-categoria="todos" data-log="Filtro Categoria: Todos">Todos</button>
-                            <button type="button" class="btn-filtro" data-categoria="destacados" data-log="Filtro Categoria: Destacados">Destacados</button>
-                            <button type="button" class="btn-filtro" data-categoria="insumos" data-log="Filtro Categoria: Insumos">Insumos</button>
-                            <button type="button" class="btn-filtro" data-categoria="servicios" data-log="Filtro Categoria: Servicios">Servicios</button>
-                            <button type="button" class="btn-filtro" data-categoria="kits" data-log="Filtro Categoria: Kits">Kits</button>
+                            <button type="button" class="btn-filtro btn-filtro-compacto activo" data-categoria="todos" data-log="Filtro Categoria: Todos">Todos</button>
+                            <button type="button" class="btn-filtro btn-filtro-compacto" data-categoria="destacados" data-log="Filtro Categoria: Medicamentos">Medicamentos</button>
+                            <button type="button" class="btn-filtro btn-filtro-compacto" data-categoria="insumos" data-log="Filtro Categoria: Insumos">Insumos</button>
+                            <button type="button" class="btn-filtro btn-filtro-compacto" data-categoria="servicios" data-log="Filtro Categoria: Servicios">Servicios</button>
+                            <button type="button" class="btn-filtro btn-filtro-compacto" data-categoria="kits" data-log="Filtro Categoria: Kits">Kits</button>
+                        </div>
+
+                        <div class="utilidades-compactas">
+                            <span class="indicador-linea-badge" id="indicador-linea-activa"><strong>Todas las Lineas Farmaceuticas</strong></span>
+                            <span class="insignia-visibles-catalogo">
+                                <strong id="indicador-visibles-catalogo">0</strong> / <strong id="indicador-total-catalogo">0</strong> medicamentos
+                            </span>
+                            <select id="selector-orden" class="control-select control-select-pequeno" aria-label="Ordenar medicamentos" data-log="Selector de Ordenamiento de Catalogo">
+                                <option value="predeterminado">Relevancia</option>
+                                <option value="precio-asc">Menor precio</option>
+                                <option value="precio-desc">Mayor precio</option>
+                                <option value="nombre-asc">A - Z</option>
+                                <option value="nombre-desc">Z - A</option>
+                            </select>
+                            <button type="button" id="btn-toggle-cascada" class="btn-secundario btn-compacto" aria-expanded="false" aria-controls="filtros-cascada" data-log="Filtro 3 Capas: Alternar Panel">Filtro Terapeutico 3 Capas</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="barra-estado-catalogo">
-                    <p id="texto-estado-filtro">Mostrando 8 de 8 items disponibles en el catalogo.</p>
-                    <div class="orden-bloque">
-                        <label for="selector-orden" class="etiqueta-inline">Ordenar por:</label>
-                        <select id="selector-orden" class="control-select control-select-pequeno" data-log="Selector de Ordenamiento de Catalogo">
-                            <option value="predeterminado">Relevancia original</option>
-                            <option value="precio-asc">Precio: menor a mayor</option>
-                            <option value="precio-desc">Precio: mayor a menor</option>
-                            <option value="nombre-asc">Nombre: A - Z</option>
-                            <option value="nombre-desc">Nombre: Z - A</option>
-                        </select>
-                    </div>
+                    <p id="texto-estado-filtro" class="texto-estado-compacto">Cargando catalogo farmaceutico...</p>
+
+                    <section id="filtros-cascada" class="filter-section-compacta" style="display: none;">
+                        <div class="filtros-cascada-grilla">
+                            <select id="capa1" class="control-select control-select-pequeno" data-log="Filtro 3 Capas: Seleccion Capa 1">
+                                <option value="">-- Elija Linea Farmaceutica --</option>
+                                <option value="destacados">Medicamentos Destacados / Alta Rotacion</option>
+                                <option value="insumos">Insumos y Material Clinico</option>
+                                <option value="servicios">Servicios Farmaceuticos y Asesoria</option>
+                                <option value="kits">Kits y Paquetes Hospitalarios</option>
+                            </select>
+                            <select id="capa2" class="control-select control-select-pequeno" disabled data-log="Filtro 3 Capas: Seleccion Capa 2">
+                                <option value="">-- Primero elija linea --</option>
+                            </select>
+                            <div id="resultadoFiltro" class="item-card item-card-compacto">Seleccione linea y subcategoria terapeutica...</div>
+                        </div>
+                    </section>
                 </div>
 
                 <div id="mensaje-sin-resultados" class="alerta-vacia" style="display: none;">
@@ -120,254 +138,242 @@
                     <button type="button" id="btn-restablecer-filtros" class="btn-primario" data-log="Catalogo: Restablecer Filtros">Mostrar Todo el Catalogo</button>
                 </div>
 
-                <div id="contenedor-tarjetas" class="grilla-catalogo">
+                <div id="contenedor-tarjetas" class="grilla-catalogo linea-todos">
+                    <div class="estado-carga-catalogo">Cargando medicamentos desde data/medicamentos.json...</div>
+                </div>
+            </section>
 
-                    <article class="tarjeta-producto" data-id="ITEM-101" data-nombre="Pack Profesional Linea Principal" data-categoria="destacados" data-precio="480.00" data-stock="15" data-orden="1">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Destacados</span>
-                            <span class="codigo-sku">COD: ITEM-101</span>
-                        </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Pack Profesional Linea Principal</h3>
-                            <p class="producto-descripcion">Producto principal de alta demanda elaborado bajo estandares certificados para uso continuo y profesional.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>15 uds.</strong></span>
-                                <span>Entrega: <strong>Inmediata</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio Unitario</span>
-                                <strong class="precio-valor">Bs. 480.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-101" data-log="Carrito: Agregar ITEM-101">Agregar</button>
-                        </div>
-                    </article>
+            <section id="vista-cotizador" class="vista-seccion oculto">
+                <div class="grilla-cotizador-fusionado">
+                    <div class="panel-bloque">
+                        <span class="insignia-categoria">Cotizacion Mayorista</span>
+                        <h2 class="titulo-seccion">Cotizador Mayorista y Reserva de Lote</h2>
+                        <p class="descripcion-seccion">Calcule reservas de lotes institucionales o registre ordenes rapidas por presentacion farmaceutica.</p>
 
-                    <article class="tarjeta-producto" data-id="ITEM-102" data-nombre="Set de Insumos Esenciales" data-categoria="insumos" data-precio="165.50" data-stock="30" data-orden="2">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Insumos</span>
-                            <span class="codigo-sku">COD: ITEM-102</span>
+                        <div class="aviso-tarifa-protegida">
+                            Al confirmar la reserva se activa la tarifa institucional protegida por <strong>00:30</strong> segundos en la ventana de confirmacion.
                         </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Set de Insumos Esenciales</h3>
-                            <p class="producto-descripcion">Surtido completo de complementos e insumos de reposicion con presentacion sellada de fabrica.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>30 uds.</strong></span>
-                                <span>Formato: <strong>Caja Sellada</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio Unitario</span>
-                                <strong class="precio-valor">Bs. 165.50</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-102" data-log="Carrito: Agregar ITEM-102">Agregar</button>
-                        </div>
-                    </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-103" data-nombre="Servicio de Asesoria y Atencion Integral" data-categoria="servicios" data-precio="320.00" data-stock="12" data-orden="3">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Servicios</span>
-                            <span class="codigo-sku">COD: ITEM-103</span>
+                        <div class="calculadora-reserva">
+                            <label for="hrs">Lotes o Asesoria Especial (40 BOB/ud):</label>
+                            <input type="number" id="hrs" class="control-input" value="1" min="1">
+                            <h4>Total: <span id="total">40</span> BOB</h4>
+                            <button type="button" id="btnModal" class="btn-primario" data-log="Cotizador: Confirmar Reserva de Lotes Especiales">Confirmar Reserva</button>
                         </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Servicio de Asesoria y Atencion Integral</h3>
-                            <p class="producto-descripcion">Sesion especializada a cargo de profesionales acreditados con evaluacion tecnica, diagnostico y seguimiento.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>12 cupos</strong></span>
-                                <span>Modalidad: <strong>Presencial</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Tarifa Servicio</span>
-                                <strong class="precio-valor">Bs. 320.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-103" data-log="Carrito: Agregar ITEM-103">Agregar</button>
-                        </div>
-                    </article>
 
-                    <article class="tarjeta-producto" data-id="ITEM-104" data-nombre="Kit Especial Edicion Completa" data-categoria="kits" data-precio="690.00" data-stock="10" data-orden="4">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Kits</span>
-                            <span class="codigo-sku">COD: ITEM-104</span>
+                        <div class="separador-subpanel">
+                            <h3 class="subtitulo-bloque-cotizador">Orden Directa por Presentacion</h3>
+                            <form id="orderForm" class="formulario-orden" novalidate>
+                                <label for="variantSelect" class="etiqueta-campo">Presentacion Farmaceutica:</label>
+                                <select id="variantSelect" class="control-select">
+                                    <option value="Caja Clinica Basica (1 und)" data-precio="50">Caja Clinica Basica (1 und) - 50 BOB</option>
+                                    <option value="Pack Hospitalario Doble (2 und)" data-precio="80">Pack Hospitalario Doble (2 und) - 80 BOB</option>
+                                    <option value="Lote Institucional Mayorista (10 und)" data-precio="350">Lote Institucional Mayorista (10 und) - 350 BOB</option>
+                                </select>
+                                <div class="cabecera-campo">
+                                    <label for="userTikTok" class="etiqueta-campo">Codigo de Farmacia o Institucion:</label>
+                                    <span id="errUserTikTok" class="estado-validacion-campo"></span>
+                                </div>
+                                <input type="text" id="userTikTok" class="control-input" placeholder="Ej. FARM-SCZ-014">
+                                <button type="submit" class="btn-order btn-primario">Incorporar Orden al Pedido</button>
+                            </form>
+                            <div id="logDia2" class="log-box"><div>[Sistema] Mesa mayorista lista para registrar presentaciones.</div></div>
                         </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Kit Especial Edicion Completa</h3>
-                            <p class="producto-descripcion">Combinacion integral de articulos seleccionados lista para eventos, campanas o implementacion inmediata.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>10 kits</strong></span>
-                                <span>Contenido: <strong>8 piezas</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio por Kit</span>
-                                <strong class="precio-valor">Bs. 690.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-104" data-log="Carrito: Agregar ITEM-104">Agregar</button>
-                        </div>
-                    </article>
+                    </div>
 
-                    <article class="tarjeta-producto" data-id="ITEM-105" data-nombre="Unidad Premium de Alto Desempeno" data-categoria="destacados" data-precio="840.00" data-stock="8" data-orden="5">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Destacados</span>
-                            <span class="codigo-sku">COD: ITEM-105</span>
-                        </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Unidad Premium de Alto Desempeno</h3>
-                            <p class="producto-descripcion">Version superior con componentes reforzados, acabado de primera linea y garantia extendida.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>8 uds.</strong></span>
-                                <span>Garantia: <strong>12 meses</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio Unitario</span>
-                                <strong class="precio-valor">Bs. 840.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-105" data-log="Carrito: Agregar ITEM-105">Agregar</button>
-                        </div>
-                    </article>
+                    <div class="panel-bloque">
+                        <span class="insignia-categoria">Atencion Prioritaria</span>
+                        <h2 class="titulo-seccion">Lotes Prioritarios Flash y Mesa de Regencia Farmaceutica</h2>
+                        <p class="descripcion-seccion">Reserve lotes clinicos con descuento institucional vigente y envie consultas directas al Regente Farmaceutico en turno.</p>
 
-                    <article class="tarjeta-producto" data-id="ITEM-106" data-nombre="Paquete de Recarga y Mantenimiento" data-categoria="insumos" data-precio="110.00" data-stock="45" data-orden="6">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Insumos</span>
-                            <span class="codigo-sku">COD: ITEM-106</span>
+                        <div id="liveContainer" class="stream-box">
+                            <p>DISPONIBLE EN TURNO: Lote Analgesico Clinico con Descuento Institucional</p>
+                            <button type="button" class="btn-oferta" data-prod="Lote Analgesico Clinico 50% OFF" data-precio="225">Reservar Lote Analgesico (Bs. 225)</button>
+                            <button type="button" class="btn-oferta btn-like" data-action="Like">Confirmar Recepcion de Lote</button>
                         </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Paquete de Recarga y Mantenimiento</h3>
-                            <p class="producto-descripcion">Consumibles de uso frecuente optimizados para conservar el rendimiento diario y reducir costos operativos.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>45 packs</strong></span>
-                                <span>Rendimiento: <strong>30 usos</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio Pack</span>
-                                <strong class="precio-valor">Bs. 110.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-106" data-log="Carrito: Agregar ITEM-106">Agregar</button>
-                        </div>
-                    </article>
-
-                    <article class="tarjeta-producto" data-id="ITEM-107" data-nombre="Programa de Atencion Personalizada" data-categoria="servicios" data-precio="450.00" data-stock="14" data-orden="7">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Servicios</span>
-                            <span class="codigo-sku">COD: ITEM-107</span>
-                        </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Programa de Atencion Personalizada</h3>
-                            <p class="producto-descripcion">Cobertura programada por sesiones con especialistas asignados, control de avance y soporte prioritario.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>14 cupos</strong></span>
-                                <span>Duracion: <strong>4 sesiones</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Tarifa Programa</span>
-                                <strong class="precio-valor">Bs. 450.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-107" data-log="Carrito: Agregar ITEM-107">Agregar</button>
-                        </div>
-                    </article>
-
-                    <article class="tarjeta-producto" data-id="ITEM-108" data-nombre="Combo Corporativo y Familiar Multiuso" data-categoria="kits" data-precio="530.00" data-stock="20" data-orden="8">
-                        <div class="tarjeta-cabecera">
-                            <span class="insignia-categoria">Kits</span>
-                            <span class="codigo-sku">COD: ITEM-108</span>
-                        </div>
-                        <div class="tarjeta-cuerpo">
-                            <h3 class="producto-titulo">Combo Corporativo y Familiar Multiuso</h3>
-                            <p class="producto-descripcion">Seleccion equilibrada con bonificacion especial disenada para cubrir requerimientos grupales o institucionales.</p>
-                            <div class="producto-meta">
-                                <span>Disponibles: <strong>20 combos</strong></span>
-                                <span>Ahorro: <strong>15% incluido</strong></span>
-                            </div>
-                        </div>
-                        <div class="tarjeta-pie">
-                            <div class="precio-bloque">
-                                <span class="precio-etiqueta">Precio Combo</span>
-                                <strong class="precio-valor">Bs. 530.00</strong>
-                            </div>
-                            <button type="button" class="btn-primario btn-agregar-carrito" data-id="ITEM-108" data-log="Carrito: Agregar ITEM-108">Agregar</button>
-                        </div>
-                    </article>
-
+                        <label for="chatInput" class="etiqueta-campo">Consulta al Regente Farmaceutico en turno:</label>
+                        <input type="text" id="chatInput" class="control-input" placeholder="Escriba consulta sobre stock, lote o registro sanitario...">
+                        <div id="logOutput" class="log-stream"><div>[Regencia Farmaceutica] Canal abierto para consultas de turno.</div></div>
+                    </div>
                 </div>
             </section>
 
             <section id="vista-paquetes" class="vista-seccion oculto">
                 <div class="panel-bloque">
-                    <h2 class="titulo-seccion">Paquetes Especiales y Planes Comerciales</h2>
-                    <p class="descripcion-seccion">Opciones preconfiguradas con tarifas preferenciales. Al seleccionar cualquier paquete se incorpora inmediatamente a su pedido actual.</p>
+                    <h2 class="titulo-seccion">Kits y Paquetes Hospitalarios</h2>
+                    <p class="descripcion-seccion">Paquetes preconfigurados con tarifa institucional. Al seleccionar un paquete se incorpora inmediatamente a su pedido.</p>
 
                     <div class="grilla-planes">
                         <div class="tarjeta-plan">
-                            <span class="plan-etiqueta">Nivel Inicial</span>
-                            <h3 class="plan-nombre">Paquete Basico</h3>
+                            <span class="plan-etiqueta">Atencion Primaria</span>
+                            <h3 class="plan-nombre">Kit Basico de Botiquin Institucional</h3>
                             <p class="plan-precio">Bs. 290.00</p>
                             <ul class="plan-lista">
-                                <li>Seleccion esencial de productos de linea</li>
-                                <li>Atencion preferencial en sucursal</li>
-                                <li>Entrega coordinada sin costo adicional</li>
+                                <li>Analgesicos y antisepticos de primera respuesta</li>
+                                <li>Material de curacion esteril</li>
+                                <li>Reposicion trimestral programada</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-201" data-nombre="Paquete Basico" data-categoria="servicios" data-precio="290.00" data-log="Paquetes: Incorporar PACK-201">Incorporar al Pedido</button>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-201">Ver Contenido del Paquete</button>
+                            <div class="accordion-panel" style="display: none;">Paracetamol 500 mg x 100, gasas esteriles x 50, alcohol al 70% 1 L, vendas elasticas x 6 y guantes de nitrilo x 100.</div>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-201" data-nombre="Kit Basico de Botiquin Institucional" data-categoria="kits" data-precio="290.00" data-log="Paquetes: Incorporar PACK-201">Incorporar al Pedido</button>
                         </div>
 
                         <div class="tarjeta-plan plan-destacado">
                             <span class="plan-etiqueta">Mas Solicitado</span>
-                            <h3 class="plan-nombre">Paquete Integral Plus</h3>
+                            <h3 class="plan-nombre">Paquete Hospitalario Integral</h3>
                             <p class="plan-precio">Bs. 580.00</p>
                             <ul class="plan-lista">
-                                <li>Dotacion completa de productos e insumos</li>
-                                <li>Asesoria tecnica y seguimiento dedicado</li>
-                                <li>Reposicion prioritaria garantizada</li>
+                                <li>Antibioticos y soluciones parenterales</li>
+                                <li>Insumos de bioseguridad para sala</li>
+                                <li>Asesoria farmaceutica dedicada</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-202" data-nombre="Paquete Integral Plus" data-categoria="servicios" data-precio="580.00" data-log="Paquetes: Incorporar PACK-202">Incorporar al Pedido</button>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-202">Ver Contenido del Paquete</button>
+                            <div class="accordion-panel" style="display: none;">Ceftriaxona 1 g x 20, solucion fisiologica 1000 mL x 12, equipos de venoclisis x 24, mascarillas tricapa x 50 y visita tecnica mensual.</div>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-202" data-nombre="Paquete Hospitalario Integral" data-categoria="kits" data-precio="580.00" data-log="Paquetes: Incorporar PACK-202">Incorporar al Pedido</button>
                         </div>
 
                         <div class="tarjeta-plan">
-                            <span class="plan-etiqueta">Nivel Avanzado</span>
-                            <h3 class="plan-nombre">Paquete Empresarial VIP</h3>
+                            <span class="plan-etiqueta">Convenio Institucional</span>
+                            <h3 class="plan-nombre">Convenio Clinico Premium</h3>
                             <p class="plan-precio">Bs. 950.00</p>
                             <ul class="plan-lista">
-                                <li>Cobertura integral de catalogo y servicios</li>
-                                <li>Soporte continuo y garantia extendida</li>
-                                <li>Despacho directo a domicilio u oficina</li>
+                                <li>Cobertura integral del vademecum QUIMFA</li>
+                                <li>Farmacovigilancia y control de calidad</li>
+                                <li>Despacho en cadena de frio incluido</li>
                             </ul>
-                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-203" data-nombre="Paquete Empresarial VIP" data-categoria="servicios" data-precio="950.00" data-log="Paquetes: Incorporar PACK-203">Incorporar al Pedido</button>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-203">Ver Contenido del Paquete</button>
+                            <div class="accordion-panel" style="display: none;">Precios preferenciales en todo el catalogo, informe mensual de farmacovigilancia, analisis de un lote por mes y dos despachos refrigerados.</div>
+                            <button type="button" class="btn-primario btn-agregar-plan" data-id="PACK-203" data-nombre="Convenio Clinico Premium" data-categoria="kits" data-precio="950.00" data-log="Paquetes: Incorporar PACK-203">Incorporar al Pedido</button>
                         </div>
                     </div>
                 </div>
             </section>
 
             <section id="vista-nosotros" class="vista-seccion oculto">
-                <div class="panel-bloque">
-                    <h2 class="titulo-seccion">Perfil Institucional y Garantias de Servicio</h2>
-                    <p class="descripcion-seccion">Trabajamos con estandares de excelencia para brindar productos confiables, insumos certificados y servicios profesionales adaptados a cada cliente.</p>
+                <div class="panel-bloque panel-corporativo">
+                    <span class="insignia-categoria">Registro Sanitario Vigente y Cadena de Suministro Certificada</span>
+                    <h2 class="titulo-seccion">Nosotros | QUIMFA S.A.</h2>
+                    <p class="descripcion-seccion">Division Farmaceutica y Suministros Medicos orientada al abastecimiento de farmacias, clinicas e instituciones de salud bajo estandares de Buenas Practicas de Manufactura, Almacenamiento y Distribucion.</p>
+
+                    <div class="resumen-mision-nosotros">
+                        <div class="bloque-mision">
+                            <h3>Mision Farmaceutica</h3>
+                            <p>Garantizar medicamentos certificados, insumos clinicos esteriles y kits hospitalarios con trazabilidad completa por lote y respaldo tecnico permanente para el sector salud.</p>
+                        </div>
+                        <div class="bloque-mision">
+                            <h3>Cadena de Suministro Certificada</h3>
+                            <p>Almacenamiento controlado, logistica de cadena de frio validada entre 2 y 8 C y atencion institucional directa en todo el territorio nacional.</p>
+                        </div>
+                    </div>
 
                     <div class="grilla-ficha">
                         <div class="ficha-item">
-                            <h3>1. Calidad Certificada</h3>
-                            <p>Todos nuestros articulos e insumos superan controles de verificacion previos a su despacho para garantizar resultados optimos.</p>
+                            <h3>1. Medicamentos Certificados</h3>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Certificacion">Ver Ficha Tecnica del Medicamento</button>
+                            <div class="accordion-panel" style="display: none;">Incluye principio activo certificado, posologia y registro sanitario vigente.</div>
                         </div>
                         <div class="ficha-item">
-                            <h3>2. Logistica y Puntualidad</h3>
-                            <p>Gestionamos entregas programadas y despachos directos manteniendo la trazabilidad e integridad de cada orden.</p>
+                            <h3>2. Insumos Clinicos Esteriles</h3>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Insumos">Ver Normas de Calidad</button>
+                            <div class="accordion-panel" style="display: none;">Material de bioseguridad y administracion parenteral bajo normas ISO 13485, EN 455 e ISO 10555 con certificados de esterilidad por lote.</div>
                         </div>
                         <div class="ficha-item">
-                            <h3>3. Asesoria Personalizada</h3>
-                            <p>Contamos con personal capacitado para orientar su eleccion segun los requerimientos especificos de su hogar o empresa.</p>
+                            <h3>3. Cadena de Frio Validada</h3>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Cadena de Frio">Ver Protocolo Logistico</button>
+                            <div class="accordion-panel" style="display: none;">Transporte y almacenamiento de 2 a 8 C con data logger, contenedores isotermicos calificados y reporte de excursiones termicas.</div>
                         </div>
                         <div class="ficha-item">
                             <h3>4. Transparencia Comercial</h3>
-                            <p>Liquidacion clara con desglose de subtotales, impuestos de ley (13%) y emision inmediata de confirmacion de pedido.</p>
+                            <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Facturacion">Ver Condiciones de Facturacion</button>
+                            <div class="accordion-panel" style="display: none;">Liquidacion con desglose de subtotal, impuestos de ley (13%) y emision inmediata de confirmacion de pedido institucional.</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="panel-bloque panel-separado">
+                    <h2 class="titulo-seccion">Canales Oficiales y Redes Sociales</h2>
+                    <p class="descripcion-seccion">Comuniquese directamente con nuestra Division Institucional a traves de nuestros canales verificados.</p>
+                    <div class="redes-contacto redes-corporativas-grid">
+                        <a href="https://www.facebook.com/" class="tarjeta-red-social" target="_blank" rel="noopener noreferrer" data-log="Nosotros: Enlace Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                            <div>
+                                <strong>Facebook</strong>
+                                <span>QUIMFA S.A. Oficial</span>
+                            </div>
+                        </a>
+                        <a href="https://www.instagram.com/" class="tarjeta-red-social" target="_blank" rel="noopener noreferrer" data-log="Nosotros: Enlace Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                            <div>
+                                <strong>Instagram</strong>
+                                <span>@quimfa.divisionmedica</span>
+                            </div>
+                        </a>
+                        <a href="https://wa.me/59170000000?text=Hola%20QUIMFA%2C%20solicito%20informacion%20del%20catalogo%20farmaceutico" class="tarjeta-red-social tarjeta-red-mensajeria" target="_blank" rel="noopener noreferrer" data-log="Nosotros: Enlace WhatsApp">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                            </svg>
+                            <div>
+                                <strong>WhatsApp</strong>
+                                <span>Atencion Comercial Directa</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="panel-bloque panel-separado">
+                    <h2 class="titulo-seccion">Solicitud de Contacto Institucional</h2>
+                    <p class="descripcion-seccion">Registre su requerimiento institucional. Si opera sin conexion, las solicitudes se resguardan automaticamente en orden FIFO para su envio al reconectar.</p>
+                    <form id="pwaForm" class="formulario-contacto" novalidate>
+                        <div class="grilla-formulario">
+                            <div class="campo-grupo">
+                                <div class="cabecera-campo">
+                                    <label for="contacto-nombre" class="etiqueta-campo">Institucion o Responsable *</label>
+                                    <span id="errNombre" class="estado-validacion-campo"></span>
+                                </div>
+                                <input type="text" id="contacto-nombre" class="control-input" placeholder="Ej. Clinica San Lucas">
+                            </div>
+                            <div class="campo-grupo">
+                                <div class="cabecera-campo">
+                                    <label for="contacto-correo" class="etiqueta-campo">Correo Electronico *</label>
+                                    <span id="errCorreo" class="estado-validacion-campo"></span>
+                                </div>
+                                <input type="email" id="contacto-correo" class="control-input" placeholder="compras@institucion.com">
+                            </div>
+                        </div>
+                        <div class="campo-grupo campo-completo">
+                            <div class="cabecera-campo">
+                                <label for="contacto-mensaje" class="etiqueta-campo">Requerimiento *</label>
+                                <span id="errMensaje" class="estado-validacion-campo"></span>
+                            </div>
+                            <textarea id="contacto-mensaje" class="control-input control-textarea" rows="3" placeholder="Detalle los medicamentos o insumos requeridos..."></textarea>
+                        </div>
+                        <div id="feedback-contacto" class="feedback-formulario" aria-live="polite"></div>
+                        <div class="acciones-formulario-contacto">
+                            <button type="submit" class="btn-primario" data-log="Contacto: Enviar Solicitud Institucional">Enviar Solicitud</button>
+                            <button type="button" id="btn-simular-offline" class="btn-secundario" data-log="Contacto: Alternar Simulacion Cola FIFO">Simular Envio en Cola FIFO</button>
+                        </div>
+                    </form>
+
+                    <div id="panel-cola-fifo" class="panel-cola-fifo">
+                        <div class="cola-fifo-cabecera">
+                            <div>
+                                <strong>Cola Offline-First (Orden FIFO)</strong>
+                                <span id="estado-modo-cola" class="estado-modo-cola">En linea: despacho directo</span>
+                            </div>
+                            <div class="cola-fifo-acciones">
+                                <span class="insignia-cola-fifo" id="contador-cola-fifo">0 en cola</span>
+                                <button type="button" id="btn-despachar-cola" class="btn-secundario btn-compacto" data-log="Contacto: Despachar Cola FIFO">Despachar Cola</button>
+                            </div>
+                        </div>
+                        <ul id="lista-cola-fifo" class="lista-cola-fifo">
+                            <li class="cola-fifo-vacia">Sin solicitudes pendientes en cola offline.</li>
+                        </ul>
                     </div>
                 </div>
             </section>
@@ -376,9 +382,9 @@
                 <div class="panel-bloque">
                     <div class="cabecera-bitacora-vista">
                         <div>
-                            <span class="insignia-categoria">Auditoria DOM en Tiempo Real</span>
+                            <span class="insignia-categoria">Registro de Operaciones</span>
                             <h2 class="titulo-seccion">Bitacora Global de Eventos del Sistema</h2>
-                            <p class="descripcion-seccion">Captura automatica mediante delegacion de eventos (DOM Event Bubbling) para clics, cambios en selectores y tecleos en buscador, insertados con .prepend().</p>
+                            <p class="descripcion-seccion">Historial cronologico de consultas terapeuticas, selecciones de catalogo y operaciones comerciales del portal.</p>
                         </div>
                         <div class="acciones-bitacora-barra">
                             <button type="button" id="btn-limpiar-bitacora" class="btn-secundario btn-pequeno" data-log="Auditoria: Limpiar Historial de Bitacora">Vaciar Bitacora</button>
@@ -409,69 +415,67 @@
             </section>
 
         </div>
-
-        <aside class="columna-lateral">
-
-            <section class="panel-lateral-card panel-carrito-sticky" aria-labelledby="titulo-carrito">
-                <div class="panel-lateral-cabecera">
-                    <div>
-                        <h2 id="titulo-carrito" class="panel-lateral-titulo">Resumen de Pedido</h2>
-                        <span class="subtitulo-carrito">Carrito de compras interactivo</span>
-                    </div>
-                    <span class="insignia-contador" id="badge-cantidad-carrito">0 uds.</span>
-                </div>
-
-                <div id="carrito-vacio-mensaje" class="carrito-vacio">
-                    <p>Su carrito esta vacio. Seleccione productos o paquetes del catalogo para iniciar su pedido.</p>
-                </div>
-
-                <ul id="lista-items-carrito" class="lista-carrito"></ul>
-
-                <div class="resumen-carrito">
-                    <div class="fila-resumen">
-                        <span>Productos distintos:</span>
-                        <strong id="resumen-cantidad-lineas">0</strong>
-                    </div>
-                    <div class="fila-resumen">
-                        <span>Unidades totales:</span>
-                        <strong id="resumen-cantidad-unidades">0</strong>
-                    </div>
-                    <div class="fila-resumen">
-                        <span>Subtotal Neto:</span>
-                        <strong id="carrito-subtotal">Bs. 0.00</strong>
-                    </div>
-                    <div class="fila-resumen">
-                        <span>Impuestos de Ley (13%):</span>
-                        <strong id="carrito-impuesto">Bs. 0.00</strong>
-                    </div>
-                    <div class="fila-resumen fila-total">
-                        <span>Total a Pagar:</span>
-                        <strong id="carrito-total">Bs. 0.00</strong>
-                    </div>
-                </div>
-
-                <div class="acciones-carrito">
-                    <button type="button" id="btn-abrir-modal-checkout" class="btn-primario btn-bloque" data-log="Checkout: Abrir Modal de Confirmacion">Confirmar Pedido (Checkout)</button>
-                    <button type="button" id="btn-limpiar-carrito" class="btn-peligro btn-bloque" data-log="Carrito: Vaciar Inventario Completo">Vaciar Carrito</button>
-                </div>
-            </section>
-
-        </aside>
     </main>
+
+    <div id="carrito-drawer-overlay" class="carrito-drawer-overlay"></div>
+
+    <aside id="panel-carrito-drawer" class="panel-carrito-drawer" aria-labelledby="titulo-carrito">
+        <div class="panel-lateral-cabecera">
+            <div>
+                <h2 id="titulo-carrito" class="panel-lateral-titulo">Resumen de Pedido</h2>
+                <span class="subtitulo-carrito">Carrito institucional sincronizado</span>
+            </div>
+            <button type="button" id="btn-cerrar-drawer-carrito" class="btn-cerrar-drawer" data-log="Carrito: Cerrar Panel Flotante" aria-label="Cerrar panel de pedido">X</button>
+        </div>
+
+        <div id="carrito-vacio-mensaje" class="carrito-vacio">
+            <p>Su carrito esta vacio. Seleccione medicamentos, insumos o paquetes del catalogo para iniciar su pedido.</p>
+        </div>
+
+        <ul id="lista-items-carrito" class="lista-carrito"></ul>
+
+        <div class="resumen-carrito">
+            <div class="fila-resumen">
+                <span>Productos distintos:</span>
+                <strong id="resumen-cantidad-lineas">0</strong>
+            </div>
+            <div class="fila-resumen">
+                <span>Unidades totales:</span>
+                <strong id="resumen-cantidad-unidades">0</strong>
+            </div>
+            <div class="fila-resumen">
+                <span>Subtotal Neto:</span>
+                <strong id="carrito-subtotal">Bs. 0.00</strong>
+            </div>
+            <div class="fila-resumen">
+                <span>Impuestos de Ley (13%):</span>
+                <strong id="carrito-impuesto">Bs. 0.00</strong>
+            </div>
+            <div class="fila-resumen fila-total">
+                <span>Total a Pagar:</span>
+                <strong id="carrito-total">Bs. 0.00</strong>
+            </div>
+        </div>
+
+        <div class="acciones-carrito">
+            <button type="button" id="btn-abrir-modal-checkout" class="btn-primario btn-bloque" data-log="Checkout: Abrir Modal de Confirmacion">Confirmar Pedido (Checkout)</button>
+            <button type="button" id="btn-limpiar-carrito" class="btn-peligro btn-bloque" data-log="Carrito: Vaciar Inventario Completo">Vaciar Carrito</button>
+        </div>
+    </aside>
 
     <div id="modal-checkout-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-checkout-titulo">
         <div class="modal-contenedor">
             <div class="modal-cabecera">
                 <div>
-                    <h2 id="modal-checkout-titulo" class="modal-titulo">Confirmacion de Orden y Checkout</h2>
-                    <p class="modal-subtitulo">Complete los datos obligatorios antes de que concluya el tiempo de reserva.</p>
+                    <h2 id="modal-checkout-titulo" class="modal-titulo">Confirmacion de Pedido Farmaceutico</h2>
+                    <p class="modal-subtitulo">Complete los datos institucionales antes de que expire la tarifa protegida.</p>
                 </div>
-                <button type="button" id="btn-cerrar-modal" class="btn-cerrar-modal" data-log="Checkout: Cerrar Ventana Modal">X</button>
+                <button type="button" id="btn-cerrar-modal" class="btn-cerrar-modal" data-log="Checkout: Cerrar Ventana Modal" aria-label="Cerrar">X</button>
             </div>
 
             <div class="temporizador-bloque">
                 <div class="temporizador-info">
-                    <span>Tiempo restante de tarifa y reserva:</span>
+                    <span>Tiempo restante de tarifa flash:</span>
                     <strong id="temporizador-texto" class="temporizador-contador">00:30</strong>
                 </div>
                 <div class="barra-progreso-fondo">
@@ -482,44 +486,56 @@
             <form id="formulario-checkout" class="formulario-checkout" novalidate>
                 <div class="grilla-formulario">
                     <div class="campo-grupo">
-                        <label for="input-cliente-nombre" class="etiqueta-campo">Nombre Completo o Razon Social *</label>
-                        <input type="text" id="input-cliente-nombre" class="control-input campo-validable" placeholder="Ej. Carlos Mendoza / Empresa S.R.L.">
-                        <span class="mensaje-error-campo">Ingrese el nombre o razon social.</span>
+                        <div class="cabecera-campo">
+                            <label for="input-cliente-nombre" class="etiqueta-campo">Institucion o Razon Social *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
+                        <input type="text" id="input-cliente-nombre" class="control-input campo-validable" placeholder="Ej. Farmacia Central S.R.L.">
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-documento" class="etiqueta-campo">NIT o Carnet de Identidad *</label>
+                        <div class="cabecera-campo">
+                            <label for="input-cliente-documento" class="etiqueta-campo">NIT o Carnet de Identidad *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
                         <input type="text" id="input-cliente-documento" class="control-input campo-validable" placeholder="Ej. 4829104015">
-                        <span class="mensaje-error-campo">Ingrese un NIT o documento valido.</span>
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-correo" class="etiqueta-campo">Correo Electronico *</label>
-                        <input type="email" id="input-cliente-correo" class="control-input campo-validable" placeholder="cliente@dominio.com">
-                        <span class="mensaje-error-campo">Ingrese un correo con formato valido.</span>
+                        <div class="cabecera-campo">
+                            <label for="input-cliente-correo" class="etiqueta-campo">Correo Electronico *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
+                        <input type="email" id="input-cliente-correo" class="control-input campo-validable" placeholder="compras@institucion.com">
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-telefono" class="etiqueta-campo">Telefono de Contacto *</label>
+                        <div class="cabecera-campo">
+                            <label for="input-cliente-telefono" class="etiqueta-campo">Telefono de Contacto *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
                         <input type="tel" id="input-cliente-telefono" class="control-input campo-validable" placeholder="Ej. 70012345">
-                        <span class="mensaje-error-campo">Ingrese un telefono de contacto.</span>
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="select-metodo-pago" class="etiqueta-campo">Metodo de Pago *</label>
+                        <div class="cabecera-campo">
+                            <label for="select-metodo-pago" class="etiqueta-campo">Metodo de Pago *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
                         <select id="select-metodo-pago" class="control-select campo-validable" data-log="Checkout: Seleccion de Metodo de Pago">
                             <option value="">Seleccione una opcion...</option>
                             <option value="Pago QR Simple">Pago QR Simple</option>
                             <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                            <option value="Efectivo en Entrega">Efectivo en Entrega</option>
+                            <option value="Credito Institucional 30 dias">Credito Institucional 30 dias</option>
                         </select>
-                        <span class="mensaje-error-campo">Seleccione un metodo de pago.</span>
                     </div>
 
                     <div class="campo-grupo">
-                        <label for="input-cliente-direccion" class="etiqueta-campo">Direccion de Entrega o Sucursal *</label>
+                        <div class="cabecera-campo">
+                            <label for="input-cliente-direccion" class="etiqueta-campo">Direccion de Entrega o Sucursal *</label>
+                            <span class="estado-validacion-campo"></span>
+                        </div>
                         <input type="text" id="input-cliente-direccion" class="control-input campo-validable" placeholder="Av. Principal Nro. 450, Zona Central">
-                        <span class="mensaje-error-campo">Ingrese la direccion de entrega.</span>
                     </div>
                 </div>
 
@@ -543,16 +559,7 @@
 
     <footer class="pie-pagina">
         <div class="contenedor-ancho pie-contenido">
-            <div class="pie-info">
-                <p>Nova Comercial &amp; Servicios | Sistema de Catalogo y Carrito en Linea</p>
-                <p>Arquitectura Frontend HTML5, CSS3 y jQuery 3.7.1</p>
-            </div>
-            <div class="pie-redes">
-                <span class="pie-redes-titulo">Siguenos:</span>
-                <a href="#" class="enlace-red-social" data-log="Footer: Enlace Facebook">Facebook</a>
-                <a href="#" class="enlace-red-social" data-log="Footer: Enlace Instagram">Instagram</a>
-                <a href="https://wa.me/59100000000" class="enlace-red-social enlace-whatsapp" target="_blank" rel="noopener noreferrer" data-log="Footer: Enlace WhatsApp">WhatsApp</a>
-            </div>
+            <p class="pie-linea-unica">QUIMFA S.A. | Division Farmaceutica y Suministros Medicos - Catalogo Oficial</p>
         </div>
     </footer>
 

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="QUIMFA S.A. App Movil del Catalogo Farmaceutico Institucional.">
+    <title>QUIMFA App | Farmacia Institucional</title>
+    <script>
+        (function () {
+            var esPantallaEscritorio = window.innerWidth >= 1025 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (esPantallaEscritorio) {
+                window.location.replace('../index.html');
+            }
+        })();
+    </script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f4c81">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="QuimfaPWA">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="styles-pwa.css">
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker PWA Registrado con Exito:', reg.scope))
+                .catch(err => console.error('Fallo en Registro de SW:', err));
+        });
+    }
+    </script>
+</head>
+<body class="modo-claro app-android" id="app-raiz">
+
+    <div id="contenedor-toasts" class="contenedor-toasts" aria-live="polite"></div>
+
+    <header class="app-barra-superior">
+        <div class="fila-barra-superior">
+            <button type="button" id="btn-menu" class="btn-icono" data-log="Interfaz: Alternar Menu Hamburguesa" aria-label="Abrir menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+            </button>
+            <div class="pildora-perfil">
+                <span class="pildora-sigla">QF</span>
+                <span class="pildora-separador">|</span>
+                <span class="pildora-texto">Farmacia Institucional</span>
+            </div>
+            <div class="acciones-barra">
+                <button type="button" id="btn-lupa" class="btn-icono" data-log="Interfaz: Abrir Buscador Rapido" aria-label="Buscar">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+                <button type="button" id="btn-alternar-tema" class="btn-icono" data-log="Interfaz: Alternar Modo Oscuro / Modo Claro" aria-label="Cambiar tema">
+                    <svg class="icono-luna" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="icono-sol" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.4" y2="6.4"/><line x1="17.6" y1="17.6" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.4" y2="17.6"/><line x1="17.6" y1="6.4" x2="19.4" y2="4.6"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="fila-barra-estado">
+            <span class="contador-compacto">Items: <strong id="pwa-contador-items">0</strong> | <strong id="pwa-contador-total">Bs. 0.00</strong></span>
+            <span id="estadoRed" class="indicador-red">En Linea</span>
+        </div>
+        <div id="barra-busqueda" class="barra-busqueda" style="display: none;">
+            <input type="search" id="buscador-productos" class="control-input" placeholder="Buscar medicamento, principio activo o codigo..." autocomplete="off" data-log="Buscador: Tecleo en Campo de Busqueda">
+            <button type="button" id="btn-limpiar-busqueda" class="btn-texto" data-log="Buscador: Limpiar Texto">Limpiar</button>
+        </div>
+        <nav id="menu-movil" class="menu-cajon" style="display: none;" aria-label="Menu de navegacion">
+            <button type="button" class="item-cajon" data-pantalla="pantalla-inicio" data-log="Menu: Ir a Inicio">Inicio y Lote Flash</button>
+            <button type="button" class="item-cajon" data-pantalla="pantalla-vademecum" data-log="Menu: Ir a Vademecum">Vademecum Farmaceutico</button>
+            <button type="button" class="item-cajon" data-pantalla="pantalla-cotizador" data-log="Menu: Ir a Cotizador">Cotizador y Orden Rapida</button>
+            <button type="button" class="item-cajon" data-pantalla="pantalla-paquetes" data-log="Menu: Ir a Paquetes">Paquetes e Institucional</button>
+            <button type="button" class="item-cajon" data-pantalla="pantalla-bitacora" data-log="Menu: Ir a Bitacora"><span>Bitacora de Eventos</span> <span id="contador-eventos-menu" class="insignia-menu-log">0</span></button>
+        </nav>
+    </header>
+
+    <main class="app-contenido">
+
+        <section id="pantalla-inicio" class="pantalla pantalla-activa">
+            <article class="seccion-destacada tarjeta-lote-flash" id="tarjeta-lote-flash">
+                <div class="lote-flash-cabecera">
+                    <span class="lote-flash-etiqueta">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Alerta de Lote Flash
+                    </span>
+                    <strong id="cuenta-lote-flash" class="lote-flash-cuenta">15:00</strong>
+                </div>
+                <h2 class="lote-flash-titulo">Lote Prioritario Ceftriaxona 1 g</h2>
+                <p class="lote-flash-texto">Descuento institucional del 35% por tiempo limitado para farmacias hospitalarias. Confirme su interes antes del cierre.</p>
+                <div class="barra-progreso-fondo barra-flash">
+                    <div id="barra-lote-flash" class="barra-progreso-relleno"></div>
+                </div>
+                <div class="lote-flash-acciones">
+                    <button type="button" id="btn-lote-flash" class="btn-flash-accion" data-action="Like">Confirmar Lote Prioritario / Like</button>
+                    <span class="lote-flash-likes"><strong id="contador-likes-flash">0</strong> confirmaciones</span>
+                </div>
+            </article>
+
+            <section id="banner-linea" class="tarjeta-linea matiz-todos">
+                <span class="tarjeta-linea-etiqueta">Linea activa</span>
+                <p id="indicador-linea-activa" class="tarjeta-linea-valor"><strong>Todas las Lineas Farmaceuticas</strong></p>
+                <div class="chips-rapidos" id="chips-inicio">
+                    <button type="button" class="chip-acceso" data-categoria="destacados" data-log="Inicio: Acceso Rapido Medicamentos">Medicamentos</button>
+                    <button type="button" class="chip-acceso" data-categoria="insumos" data-log="Inicio: Acceso Rapido Insumos">Insumos</button>
+                    <button type="button" class="chip-acceso" data-categoria="servicios" data-log="Inicio: Acceso Rapido Servicios">Servicios</button>
+                    <button type="button" class="chip-acceso" data-categoria="kits" data-log="Inicio: Acceso Rapido Kits">Kits</button>
+                </div>
+            </section>
+
+            <section class="tarjeta-app">
+                <h3 class="tarjeta-app-titulo">Lotes Prioritarios y Mesa de Regencia</h3>
+                <p class="tarjeta-app-texto">Reserva directa de lotes clinicos con descuento institucional y consultas al Regente Farmaceutico.</p>
+                <div id="liveContainer" class="stream-box">
+                    <p>DISPONIBLE EN TURNO: Lotes Farmaceuticos Prioritarios con Descuento Institucional</p>
+                    <button type="button" class="btn-oferta" data-prod="Lote Analgesico Clinico 50% OFF" data-precio="225">Reservar Lote Analgesico (Bs. 225)</button>
+                    <button type="button" class="btn-oferta btn-like" data-action="Like">Confirmar Recepcion de Lote</button>
+                </div>
+                <input type="text" id="chatInput" class="control-input" placeholder="Consulta directa al Regente Farmaceutico...">
+                <div id="logOutput" class="log-stream"><div>[Regencia Farmaceutica] Canal abierto para consultas de turno.</div></div>
+            </section>
+        </section>
+
+        <section id="pantalla-vademecum" class="pantalla">
+            <h2 class="titulo-pantalla">Vademecum QUIMFA</h2>
+
+            <div class="chips-categoria" id="grupo-filtros-categoria">
+                <button type="button" class="btn-filtro activo" data-categoria="todos" data-log="Filtro Categoria: Todos">Todos</button>
+                <button type="button" class="btn-filtro" data-categoria="destacados" data-log="Filtro Categoria: Medicamentos">Medicamentos</button>
+                <button type="button" class="btn-filtro" data-categoria="insumos" data-log="Filtro Categoria: Insumos">Insumos</button>
+                <button type="button" class="btn-filtro" data-categoria="servicios" data-log="Filtro Categoria: Servicios">Servicios</button>
+                <button type="button" class="btn-filtro" data-categoria="kits" data-log="Filtro Categoria: Kits">Kits</button>
+            </div>
+
+            <div class="barra-estado-catalogo">
+                <p id="texto-estado-filtro">Cargando catalogo...</p>
+                <div class="fila-vademecum-util">
+                    <span class="insignia-visibles-catalogo"><strong id="indicador-visibles-catalogo">0</strong> / <span id="indicador-total-catalogo">0</span></span>
+                    <button type="button" id="btn-toggle-cascada" class="btn-secundario btn-compacto-pwa" aria-expanded="false" aria-controls="filtros-cascada" data-log="Filtro 3 Capas: Alternar Panel">Filtro 3 Capas</button>
+                    <select id="selector-orden" class="control-select control-select-pequeno" data-log="Selector de Ordenamiento de Catalogo" aria-label="Ordenar catalogo">
+                        <option value="predeterminado">Relevancia</option>
+                        <option value="precio-asc">Precio menor</option>
+                        <option value="precio-desc">Precio mayor</option>
+                        <option value="nombre-asc">Nombre A - Z</option>
+                        <option value="nombre-desc">Nombre Z - A</option>
+                    </select>
+                </div>
+            </div>
+
+            <section id="filtros-cascada" class="filter-section" style="display: none;">
+                <h3>Filtro Terapeutico de 3 Capas</h3>
+                <select id="capa1" class="control-select" data-log="Filtro 3 Capas: Seleccion Capa 1">
+                    <option value="">-- Elija Linea Farmaceutica --</option>
+                    <option value="destacados">Medicamentos Destacados / Alta Rotacion</option>
+                    <option value="insumos">Insumos y Material Clinico</option>
+                    <option value="servicios">Servicios Farmaceuticos y Asesoria</option>
+                    <option value="kits">Kits y Paquetes Hospitalarios</option>
+                </select>
+                <select id="capa2" class="control-select" disabled data-log="Filtro 3 Capas: Seleccion Capa 2">
+                    <option value="">-- Primero elija linea --</option>
+                </select>
+                <div id="resultadoFiltro" class="item-card">Seleccione las capas anteriores...</div>
+            </section>
+
+            <div id="mensaje-sin-resultados" class="alerta-vacia" style="display: none;">
+                <h3>Sin coincidencias</h3>
+                <p>Ajuste la busqueda o restablezca los filtros.</p>
+                <button type="button" id="btn-restablecer-filtros" class="btn-primario" data-log="Catalogo: Restablecer Filtros">Mostrar Todo</button>
+            </div>
+
+            <div id="contenedor-tarjetas" class="lista-tarjetas linea-todos">
+                <div class="estado-carga-catalogo">Cargando medicamentos...</div>
+            </div>
+        </section>
+
+        <section id="pantalla-cotizador" class="pantalla">
+            <h2 class="titulo-pantalla">Cotizador Institucional</h2>
+
+            <section class="tarjeta-app">
+                <h3 class="tarjeta-app-titulo">Reserva de Lotes Especiales</h3>
+                <div class="aviso-tarifa-protegida">
+                    Tarifa institucional protegida durante <strong>00:30</strong> segundos al confirmar su reserva.
+                </div>
+                <div class="calculadora-reserva">
+                    <label for="hrs">Horas de Reserva / Lotes Especiales (40 BOB/ud): </label>
+                    <input type="number" id="hrs" class="control-input" value="1" min="1" inputmode="numeric">
+                    <h4>Total: <span id="total">40</span> BOB</h4>
+                    <button type="button" id="btnModal" class="btn-primario btn-bloque" data-log="Cotizador: Confirmar Reserva de Lotes Especiales">Confirmar Reserva</button>
+                </div>
+            </section>
+
+            <section class="tarjeta-app">
+                <h3 class="tarjeta-app-titulo">Orden Rapida por Variante</h3>
+                <form id="orderForm" class="formulario-orden" novalidate>
+                    <label for="variantSelect" class="etiqueta-campo">Seleccionar Presentacion / Variante Farmaceutica:</label>
+                    <select id="variantSelect" class="control-select">
+                        <option value="Caja Clinica Basica (1 und)" data-precio="50">Caja Clinica Basica (1 und) - 50 BOB</option>
+                        <option value="Pack Hospitalario Doble (2 und)" data-precio="80">Pack Hospitalario Doble (2 und) - 80 BOB</option>
+                        <option value="Lote Institucional Mayorista (10 und)" data-precio="350">Lote Institucional Mayorista (10 und) - 350 BOB</option>
+                    </select>
+                    <div class="cabecera-campo">
+                        <label for="userTikTok" class="etiqueta-campo">Codigo de Farmacia / Cliente Institucional:</label>
+                        <span id="errUserTikTok" class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="text" id="userTikTok" class="control-input" placeholder="Cliente o sucursal">
+                    <button type="submit" class="btn-order btn-primario btn-bloque">Confirmar Orden en Directo</button>
+                </form>
+                <div id="logDia2" class="log-box"><div>[Sistema] Mesa mayorista lista para registrar presentaciones.</div></div>
+            </section>
+        </section>
+
+        <section id="pantalla-paquetes" class="pantalla">
+            <h2 class="titulo-pantalla">Kits y Paquetes Hospitalarios</h2>
+
+            <div class="tarjeta-plan">
+                <span class="plan-etiqueta">Atencion Primaria</span>
+                <h3 class="plan-nombre">Kit Basico de Botiquin Institucional</h3>
+                <p class="plan-precio">Bs. 290.00</p>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-201">Ver Contenido del Paquete</button>
+                <div class="accordion-panel" style="display: none;">Paracetamol 500 mg x 100, gasas esteriles x 50, alcohol al 70% 1 L, vendas elasticas x 6 y guantes de nitrilo x 100.</div>
+                <button type="button" class="btn-primario btn-bloque btn-agregar-plan" data-id="PACK-201" data-nombre="Kit Basico de Botiquin Institucional" data-categoria="kits" data-precio="290.00" data-log="Paquetes: Incorporar PACK-201">Incorporar al Pedido</button>
+            </div>
+
+            <div class="tarjeta-plan plan-destacado">
+                <span class="plan-etiqueta">Mas Solicitado</span>
+                <h3 class="plan-nombre">Paquete Hospitalario Integral</h3>
+                <p class="plan-precio">Bs. 580.00</p>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-202">Ver Contenido del Paquete</button>
+                <div class="accordion-panel" style="display: none;">Ceftriaxona 1 g x 20, solucion fisiologica 1000 mL x 12, equipos de venoclisis x 24, mascarillas tricapa x 50 y visita tecnica mensual.</div>
+                <button type="button" class="btn-primario btn-bloque btn-agregar-plan" data-id="PACK-202" data-nombre="Paquete Hospitalario Integral" data-categoria="kits" data-precio="580.00" data-log="Paquetes: Incorporar PACK-202">Incorporar al Pedido</button>
+            </div>
+
+            <div class="tarjeta-plan">
+                <span class="plan-etiqueta">Convenio Institucional</span>
+                <h3 class="plan-nombre">Convenio Clinico Premium</h3>
+                <p class="plan-precio">Bs. 950.00</p>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Contenido PACK-203">Ver Contenido del Paquete</button>
+                <div class="accordion-panel" style="display: none;">Precios preferenciales en todo el catalogo, informe mensual de farmacovigilancia, analisis de un lote por mes y dos despachos refrigerados.</div>
+                <button type="button" class="btn-primario btn-bloque btn-agregar-plan" data-id="PACK-203" data-nombre="Convenio Clinico Premium" data-categoria="kits" data-precio="950.00" data-log="Paquetes: Incorporar PACK-203">Incorporar al Pedido</button>
+            </div>
+
+            <section class="tarjeta-app panel-corporativo">
+                <h3 class="tarjeta-app-titulo">Perfil Institucional QUIMFA S.A.</h3>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Certificacion">Ver Ficha Tecnica del Medicamento</button>
+                <div class="accordion-panel" style="display: none;">Incluye principio activo certificado, posologia y registro sanitario vigente.</div>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Insumos">Ver Normas de Calidad</button>
+                <div class="accordion-panel" style="display: none;">Material de bioseguridad y administracion parenteral bajo normas ISO 13485, EN 455 e ISO 10555 con certificados de esterilidad por lote.</div>
+                <button type="button" class="accordion-btn" data-log="Acordeon: Institucional Cadena de Frio">Ver Protocolo de Cadena de Frio</button>
+                <div class="accordion-panel" style="display: none;">Transporte y almacenamiento de 2 a 8 C con data logger, contenedores isotermicos calificados y reporte de excursiones termicas.</div>
+            </section>
+
+            <section class="tarjeta-app">
+                <h3 class="tarjeta-app-titulo">Canales Oficiales y Redes Sociales</h3>
+                <p class="tarjeta-app-texto">Comuniquese directamente con nuestra Division Institucional a traves de nuestros canales verificados.</p>
+                <div class="redes-contacto redes-corporativas-grid">
+                    <a href="https://www.facebook.com/" class="tarjeta-red-social" target="_blank" rel="noopener noreferrer" data-log="Institucional: Enlace Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <div>
+                            <strong>Facebook</strong>
+                            <span>QUIMFA S.A. Oficial</span>
+                        </div>
+                    </a>
+                    <a href="https://www.instagram.com/" class="tarjeta-red-social" target="_blank" rel="noopener noreferrer" data-log="Institucional: Enlace Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <div>
+                            <strong>Instagram</strong>
+                            <span>@quimfa.divisionmedica</span>
+                        </div>
+                    </a>
+                    <a href="https://wa.me/59170000000?text=Hola%20QUIMFA%2C%20solicito%20informacion%20del%20catalogo%20farmaceutico" class="tarjeta-red-social tarjeta-red-mensajeria" target="_blank" rel="noopener noreferrer" data-log="Institucional: Enlace WhatsApp">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                        </svg>
+                        <div>
+                            <strong>WhatsApp</strong>
+                            <span>Atencion Comercial Directa</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class="tarjeta-app">
+                <h3 class="tarjeta-app-titulo">Solicitud de Contacto Institucional</h3>
+                <form id="pwaForm" class="formulario-contacto" novalidate>
+                    <div class="campo-grupo">
+                        <div class="cabecera-campo">
+                            <label for="contacto-nombre" class="etiqueta-campo">Institucion o Responsable *</label>
+                            <span id="errNombre" class="estado-validacion-campo"></span>
+                        </div>
+                        <input type="text" id="contacto-nombre" class="control-input" placeholder="Ej. Clinica San Lucas">
+                    </div>
+                    <div class="campo-grupo">
+                        <div class="cabecera-campo">
+                            <label for="contacto-correo" class="etiqueta-campo">Correo Electronico *</label>
+                            <span id="errCorreo" class="estado-validacion-campo"></span>
+                        </div>
+                        <input type="email" id="contacto-correo" class="control-input" placeholder="compras@institucion.com" inputmode="email">
+                    </div>
+                    <div class="campo-grupo">
+                        <div class="cabecera-campo">
+                            <label for="contacto-mensaje" class="etiqueta-campo">Requerimiento *</label>
+                            <span id="errMensaje" class="estado-validacion-campo"></span>
+                        </div>
+                        <textarea id="contacto-mensaje" class="control-input control-textarea" rows="3" placeholder="Detalle los medicamentos o insumos requeridos..."></textarea>
+                    </div>
+                    <div id="feedback-contacto" class="feedback-formulario" aria-live="polite"></div>
+                    <div class="acciones-formulario-contacto">
+                        <button type="submit" class="btn-primario btn-bloque" data-log="Contacto: Enviar Solicitud Institucional">Enviar Solicitud</button>
+                        <button type="button" id="btn-simular-offline" class="btn-secundario btn-bloque" data-log="Contacto: Alternar Simulacion Cola FIFO">Simular Envio en Cola FIFO</button>
+                    </div>
+                </form>
+
+                <div id="panel-cola-fifo" class="panel-cola-fifo">
+                    <div class="cola-fifo-cabecera">
+                        <div>
+                            <strong>Cola Offline-First (Orden FIFO)</strong>
+                            <span id="estado-modo-cola" class="estado-modo-cola">En linea: despacho directo</span>
+                        </div>
+                        <div class="cola-fifo-acciones">
+                            <span class="insignia-cola-fifo" id="contador-cola-fifo">0 en cola</span>
+                            <button type="button" id="btn-despachar-cola" class="btn-secundario btn-compacto-pwa" data-log="Contacto: Despachar Cola FIFO">Despachar</button>
+                        </div>
+                    </div>
+                    <ul id="lista-cola-fifo" class="lista-cola-fifo">
+                        <li class="cola-fifo-vacia">Sin solicitudes pendientes en cola offline.</li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+
+        <section id="pantalla-bitacora" class="pantalla">
+            <div class="cabecera-pantalla">
+                <h2 class="titulo-pantalla">Bitacora Global</h2>
+                <button type="button" id="btn-limpiar-bitacora" class="btn-texto" data-log="Auditoria: Limpiar Historial de Bitacora">Vaciar</button>
+            </div>
+
+            <div class="grilla-estadisticas-bitacora">
+                <div class="tarjeta-estadistica-log">
+                    <span class="etiqueta-estadistica-log">Total</span>
+                    <strong class="valor-estadistica-log" id="contador-eventos-log">0</strong>
+                </div>
+                <div class="tarjeta-estadistica-log">
+                    <span class="etiqueta-estadistica-log">Clics / UI</span>
+                    <strong class="valor-estadistica-log" id="contador-eventos-clicks">0</strong>
+                </div>
+                <div class="tarjeta-estadistica-log">
+                    <span class="etiqueta-estadistica-log">Filtros</span>
+                    <strong class="valor-estadistica-log" id="contador-eventos-busquedas">0</strong>
+                </div>
+                <div class="tarjeta-estadistica-log">
+                    <span class="etiqueta-estadistica-log">Pedidos</span>
+                    <strong class="valor-estadistica-log" id="contador-eventos-transacciones">0</strong>
+                </div>
+            </div>
+
+            <ul id="lista-bitacora-global" class="lista-bitacora"></ul>
+        </section>
+
+    </main>
+
+    <div class="grupo-fab">
+        <a href="https://wa.me/59170000000?text=Hola%20QUIMFA%2C%20solicito%20informacion%20del%20catalogo%20farmaceutico" id="fab-mensajeria" class="fab-boton fab-mensajeria" target="_blank" rel="noopener noreferrer" data-log="FAB: Contacto Directo WhatsApp" aria-label="Contacto por WhatsApp">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg>
+        </a>
+        <button type="button" id="fab-bitacora" class="fab-boton fab-secundario" data-log="FAB: Abrir Panel de Bitacora" aria-label="Abrir bitacora de eventos">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="13" y2="15"/></svg>
+        </button>
+        <button type="button" id="fab-carrito" class="fab-boton fab-principal" data-log="FAB: Abrir Carrito y Checkout" aria-label="Abrir carrito">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+            <span class="fab-insignia" id="badge-cantidad-carrito">0</span>
+        </button>
+    </div>
+
+    <nav class="app-barra-inferior" aria-label="Navegacion inferior">
+        <button type="button" class="pestana-inferior activa" data-pantalla="pantalla-inicio" data-log="Navegacion: Pestana Inicio">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+            <span>Inicio</span>
+        </button>
+        <button type="button" class="pestana-inferior" data-pantalla="pantalla-vademecum" data-log="Navegacion: Pestana Vademecum">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6.5" x2="12" y2="12.5"/><line x1="9" y1="9.5" x2="15" y2="9.5"/></svg>
+            <span>Vadem&eacute;cum</span>
+        </button>
+        <button type="button" class="pestana-inferior" data-pantalla="pantalla-cotizador" data-log="Navegacion: Pestana Cotizador">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8" y2="11.01"/><line x1="12" y1="11" x2="12" y2="11.01"/><line x1="16" y1="11" x2="16" y2="11.01"/><line x1="8" y1="15" x2="8" y2="15.01"/><line x1="12" y1="15" x2="12" y2="15.01"/><line x1="16" y1="15" x2="16" y2="18"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+            <span>Cotizador</span>
+        </button>
+        <button type="button" class="pestana-inferior" data-pantalla="pantalla-paquetes" data-log="Navegacion: Pestana Paquetes">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><line x1="12" y1="13" x2="12" y2="21"/></svg>
+            <span>Paquetes</span>
+        </button>
+        <button type="button" class="pestana-inferior" data-pantalla="pantalla-bitacora" data-log="Navegacion: Pestana Bitacora">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="5" cy="6" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="18" r="1"/></svg>
+            <span>Bit&aacute;cora</span>
+        </button>
+    </nav>
+
+    <div id="hoja-carrito" class="hoja-overlay" role="dialog" aria-modal="true" aria-labelledby="titulo-hoja-carrito">
+        <div class="hoja-inferior">
+            <div class="hoja-asa"></div>
+            <div class="hoja-cabecera">
+                <h2 id="titulo-hoja-carrito">Carrito Institucional</h2>
+                <button type="button" class="btn-icono btn-cerrar-hoja" data-hoja="hoja-carrito" data-log="Carrito: Cerrar Hoja" aria-label="Cerrar carrito">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div id="carrito-vacio-mensaje" class="carrito-vacio">Su carrito esta vacio. Agregue medicamentos, insumos o paquetes.</div>
+            <ul id="lista-items-carrito" class="lista-carrito"></ul>
+            <div class="resumen-carrito">
+                <div class="fila-resumen"><span>Productos distintos</span><strong id="resumen-cantidad-lineas">0</strong></div>
+                <div class="fila-resumen"><span>Unidades totales</span><strong id="resumen-cantidad-unidades">0</strong></div>
+                <div class="fila-resumen"><span>Subtotal Neto</span><strong id="carrito-subtotal">Bs. 0.00</strong></div>
+                <div class="fila-resumen"><span>Impuestos de Ley (13%)</span><strong id="carrito-impuesto">Bs. 0.00</strong></div>
+                <div class="fila-resumen fila-total"><span>Total a Pagar</span><strong id="carrito-total">Bs. 0.00</strong></div>
+            </div>
+            <div class="acciones-carrito">
+                <button type="button" id="btn-abrir-modal-checkout" class="btn-primario btn-bloque" data-log="Checkout: Abrir Modal de Confirmacion">Confirmar Pedido (Checkout)</button>
+                <button type="button" id="btn-limpiar-carrito" class="btn-peligro btn-bloque" data-log="Carrito: Vaciar Inventario Completo">Vaciar Carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hoja-bitacora" class="hoja-overlay" role="dialog" aria-modal="true" aria-labelledby="titulo-hoja-bitacora">
+        <div class="hoja-inferior">
+            <div class="hoja-asa"></div>
+            <div class="hoja-cabecera">
+                <h2 id="titulo-hoja-bitacora">Panel de Bitacora de Eventos</h2>
+                <button type="button" class="btn-icono btn-cerrar-hoja" data-hoja="hoja-bitacora" data-log="Bitacora: Cerrar Panel" aria-label="Cerrar bitacora">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <ul id="lista-bitacora-rapida" class="lista-bitacora lista-bitacora-rapida"></ul>
+            <button type="button" id="btn-ver-bitacora-completa" class="btn-secundario btn-bloque" data-log="Bitacora: Ver Historial Completo">Ver Historial Completo</button>
+        </div>
+    </div>
+
+    <div id="modal-checkout-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-checkout-titulo">
+        <div class="modal-contenedor">
+            <div class="modal-cabecera">
+                <div>
+                    <h2 id="modal-checkout-titulo" class="modal-titulo">Confirmacion de Pedido</h2>
+                    <p class="modal-subtitulo">Complete los datos antes de que expire la tarifa flash.</p>
+                </div>
+                <button type="button" id="btn-cerrar-modal" class="btn-icono" data-log="Checkout: Cerrar Ventana Modal" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="temporizador-bloque">
+                <div class="temporizador-info">
+                    <span>Tarifa flash vence en:</span>
+                    <strong id="temporizador-texto" class="temporizador-contador">00:30</strong>
+                </div>
+                <div class="barra-progreso-fondo">
+                    <div id="barra-progreso-tiempo" class="barra-progreso-relleno"></div>
+                </div>
+            </div>
+
+            <form id="formulario-checkout" class="formulario-checkout" novalidate>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="input-cliente-nombre" class="etiqueta-campo">Institucion o Razon Social *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="text" id="input-cliente-nombre" class="control-input campo-validable" placeholder="Ej. Farmacia Central S.R.L.">
+                </div>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="input-cliente-documento" class="etiqueta-campo">NIT o Carnet de Identidad *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="text" id="input-cliente-documento" class="control-input campo-validable" placeholder="Ej. 4829104015" inputmode="numeric">
+                </div>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="input-cliente-correo" class="etiqueta-campo">Correo Electronico *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="email" id="input-cliente-correo" class="control-input campo-validable" placeholder="compras@institucion.com" inputmode="email">
+                </div>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="input-cliente-telefono" class="etiqueta-campo">Telefono de Contacto *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="tel" id="input-cliente-telefono" class="control-input campo-validable" placeholder="Ej. 70012345">
+                </div>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="select-metodo-pago" class="etiqueta-campo">Metodo de Pago *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <select id="select-metodo-pago" class="control-select campo-validable" data-log="Checkout: Seleccion de Metodo de Pago">
+                        <option value="">Seleccione una opcion...</option>
+                        <option value="Pago QR Simple">Pago QR Simple</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Credito Institucional 30 dias">Credito Institucional 30 dias</option>
+                    </select>
+                </div>
+                <div class="campo-grupo">
+                    <div class="cabecera-campo">
+                        <label for="input-cliente-direccion" class="etiqueta-campo">Direccion de Entrega o Sucursal *</label>
+                        <span class="estado-validacion-campo"></span>
+                    </div>
+                    <input type="text" id="input-cliente-direccion" class="control-input campo-validable" placeholder="Av. Principal Nro. 450">
+                </div>
+
+                <div class="resumen-modal-checkout">
+                    <span>Unidades: <strong id="modal-unidades-confirmar">0</strong></span>
+                    <span>Total: <strong id="modal-total-confirmar">Bs. 0.00</strong></span>
+                </div>
+
+                <div class="modal-acciones">
+                    <button type="button" id="btn-cancelar-checkout" class="btn-secundario" data-log="Checkout: Cancelar Formulario">Cancelar</button>
+                    <button type="submit" id="btn-confirmar-compra" class="btn-primario" data-log="Checkout: Enviar Confirmacion de Orden">Confirmar Orden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="script-pwa.js"></script>
+</body>
+</html>
+

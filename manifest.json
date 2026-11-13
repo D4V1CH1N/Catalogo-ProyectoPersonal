@@ -1,0 +1,26 @@
+{
+  "name": "QUIMFA S.A. - Catalogo Farmaceutico",
+  "short_name": "QUIMFA S.A.",
+  "description": "Catalogo Oficial de Medicamentos Certificados, Insumos Clinicos y Kits Hospitalarios de QUIMFA S.A.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f4c81",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "pwa/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "pwa/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
